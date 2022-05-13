@@ -1,0 +1,15 @@
+{
+    "name": "AutoAttendantBuilderModule",
+    "alias": "autoattendantbuildermodule",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AutoAttendantBuilderModule\\Providers\\AutoAttendantBuilderModuleServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": {
+        "Tech_Bench": "6.0"
+    }
+}
