@@ -7,6 +7,8 @@ return [
     'name' => 'AutoAttendantBuilderModule',
     'ver'  => '0.0.0-dev',
 
+    'allow_public_access' => false,
+
     /*
     *   Information for the Navbar
     */
@@ -27,12 +29,12 @@ return [
     *   Information for the Administration home page navigation links
     */
     'admin_nav' => [
-        [
-//          'perm_name' => null,                                    //  Name of a specific Permission that will allow this link
-            'name'      => 'AutoAttendantBuilderModule',
-            'icon'      => 'fas fa-tools',
-            'route'     => 'AutoAttendantBuilderModule.index',
-        ],
+//         [
+// //          'perm_name' => null,                                    //  Name of a specific Permission that will allow this link
+//             'name'      => 'AutoAttendantBuilderModule',
+//             'icon'      => 'fas fa-tools',
+//             'route'     => 'AutoAttendantBuilderModule.index',
+//         ],
     ],
 
     /*
