@@ -10,15 +10,14 @@ class AutoAttendantBuilderModuleController extends Controller
 {
     public function __construct()
     {
-        //  Add the Auth middleware if public users are not allowed to access this tool
-        if(!config('autoattendantbuildermodule.allow_public_access'))
+        if(!config('autoattendantbuilder.allow_public_access'))
         {
             $this->middleware('auth');
         }
     }
 
     /**
-     * Initial landing page to build application
+     * Landing page for the Module
      */
     public function index()
     {

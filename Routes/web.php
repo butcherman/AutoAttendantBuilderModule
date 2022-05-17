@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('auto-attendant-builder')->name('AutoAttendantBuilderModule.')->group(function() {
+Route::prefix('autoattendantbuildermodule')->name('AutoAttendantBuilderModule.')->group(function() {
     Route::get('/', 'AutoAttendantBuilderModuleController@index')->name('index');
 });
