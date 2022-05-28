@@ -1,5 +1,19 @@
 <template>
     <div>
+        <h4 class="text-center text-dark">
+            Schedules
+            <i class="far fa-question-circle pointer" title="Help" v-b-tooltip.hover v-b-modal.help-modal></i>
+        </h4>
+        <b-modal id="help-modal" title="Help" ok-only>
+            <p>
+                If you wish to play separate greetings for when you are open vs. when you are closed, please fill
+                out the schedule information below
+            </p>
+            <p>
+                Any time frame referenced below will be conisdered "On Hours" or Open Hours.  All other times not
+                referenced will be considered "Off Hours" or Closed Hours
+            </p>
+        </b-modal>
         <ValidationObserver v-slot="{handleSubmit}">
             <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
                 <text-input v-model="form.title" rules="required" label="Schedule Name" name="title"></text-input>

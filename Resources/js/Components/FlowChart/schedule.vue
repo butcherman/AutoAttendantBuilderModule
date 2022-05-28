@@ -30,7 +30,7 @@
         },
         data() {
             return {
-                // text: this.schedule.title,
+                //
             }
         },
         created() {

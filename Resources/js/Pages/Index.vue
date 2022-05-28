@@ -43,7 +43,7 @@
                             <div class="col border text-center p-2">
                                 <div>
                                     <b-button v-if="allowSchedule" pill variant="info" @click="addSchedule">Add Schedule</b-button>
-                                    <b-button v-if="allowGreeting" pill variant="info" @click="addGreeting">Add Greeting</b-button>
+                                    <b-button v-if="allowGreeting" pill variant="info" @click="addGreeting('24/7 Greeting')">Add Greeting</b-button>
                                     <!-- <b-button v-if="allowOption" pill variant="info">Add Option</b-button> -->
                                 </div>
                             </div>
@@ -137,6 +137,7 @@
                 }
                 this.loading = false;
             });
+
             /**
              * Open the Schedule form and load data
              */
@@ -152,6 +153,24 @@
                 }
                 this.loading = false;
             });
+
+            /**
+             * Open the Greeting form and load data
+             */
+            this.eventHub.$on('greeting-click', data => {
+                this.loading       = true;
+                this.selectedId    = data.nodeId;
+                this.formComponent = {
+                    type: 'greeting-data',
+                    data: {
+                        nodeId       : data.nodeId,
+                        greetingTitle: data.title,
+                        greeting     : data.greeting,
+                    }
+                }
+                this.loading = false;
+            });
+
             /**
              * Create the on and off hours greetings
              */
@@ -231,14 +250,17 @@
                     parentId     : this.selectedId,
                     nodeComponent: 'greeting',
                     data: {
-                        //  Default data for a new schedule
+                        //  Default data for a new greeting
                         nodeId: this.lastId,
                         greetingTitle: title,
+                        greeting: 'test ',
                         valid: false,
                     },
                 }
 
                 this.nodes.push(nodeData);
+                this.allowSchedule = false;
+                this.allowGreeting = false;
             }
         }
     }
@@ -250,5 +272,9 @@
     }
     .builder-data {
         min-height: 10vh;
+    }
+    .flowy-block {
+        max-width: 250px;
+        max-height: 500px;
     }
 </style>

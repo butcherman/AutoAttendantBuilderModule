@@ -7,9 +7,7 @@
         class="pointer"
         @click="emitClick"
     >
-        <b-card-text>
-            <p>Greeting data...</p>
-        </b-card-text>
+        <b-card-text v-html="greeting"></b-card-text>
     </b-card>
 </template>
 
@@ -21,6 +19,10 @@
                 required: true,
             },
             greetingTitle: {
+                type: String,
+                required: true,
+            },
+            greeting: {
                 type: String,
                 required: true,
             },
@@ -48,11 +50,13 @@
             //
         },
         methods: {
-            //
             emitClick()
             {
-                //
-                console.log('click');
+                this.eventHub.$emit('greeting-click', {
+                    nodeId  : this.nodeId,
+                    title   : this.greetingTitle,
+                    greeting: this.greeting
+                });
             }
         },
     }
