@@ -1,13 +1,13 @@
 <template>
     <b-card
         border-variant="dark"
-        :header="headerText"
         align="center"
         class="pointer"
+        bg-variant="info"
         @click="emitClick"
     >
         <b-card-text>
-            <div v-for="number in lineList" :key="number">{{number}}</div>
+            {{text}}
         </b-card-text>
     </b-card>
 </template>
@@ -19,18 +19,14 @@
                 type: Number,
                 required: true,
             },
-            headerText: {
-                type: String,
-                default: "Incoming Phone Numbers"
-            },
-            lineList: {
-                type: Array,
-                default: () => [''],
+            schedule: {
+                type: Object,
+                default: () => {},
             }
         },
         data() {
             return {
-                // lineList: ['5302232979', '5302249251'],
+                text: this.schedule.title,
             }
         },
         created() {
@@ -38,7 +34,6 @@
         },
         mounted() {
             //
-
         },
         computed: {
             //
@@ -49,7 +44,8 @@
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('incoming-line-click', {nodeId: this.nodeId, data: this.lineList});
+                console.log('emitting');
+                this.eventHub.$emit('schedule-click', {nodeId: this.nodeId, data: this.schedule});
             }
         },
     }

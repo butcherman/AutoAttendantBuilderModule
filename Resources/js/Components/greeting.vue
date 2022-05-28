@@ -1,13 +1,13 @@
 <template>
     <b-card
         border-variant="dark"
-        :header="headerText"
+        header="Main Greeting"
         align="center"
         class="pointer"
         @click="emitClick"
     >
         <b-card-text>
-            <div v-for="number in lineList" :key="number">{{number}}</div>
+            <p>Greeting goes here</p>
         </b-card-text>
     </b-card>
 </template>
@@ -15,22 +15,11 @@
 <script>
     export default {
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            headerText: {
-                type: String,
-                default: "Incoming Phone Numbers"
-            },
-            lineList: {
-                type: Array,
-                default: () => [''],
-            }
+            //
         },
         data() {
             return {
-                // lineList: ['5302232979', '5302249251'],
+                //
             }
         },
         created() {
@@ -38,7 +27,6 @@
         },
         mounted() {
             //
-
         },
         computed: {
             //
@@ -47,9 +35,10 @@
             //
         },
         methods: {
+            //
             emitClick()
             {
-                this.eventHub.$emit('incoming-line-click', {nodeId: this.nodeId, data: this.lineList});
+                this.eventHub.$emit('greeting-click', {nodeId: this.nodeId, data: {}});
             }
         },
     }

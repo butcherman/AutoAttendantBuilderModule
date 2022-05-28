@@ -1,13 +1,14 @@
 <template>
     <b-card
         border-variant="dark"
-        :header="headerText"
+        :header-bg-variant="valid ? 'success' : 'info'"
+        :header="greetingTitle"
         align="center"
         class="pointer"
         @click="emitClick"
     >
         <b-card-text>
-            <div v-for="number in lineList" :key="number">{{number}}</div>
+            <p>Greeting data...</p>
         </b-card-text>
     </b-card>
 </template>
@@ -19,18 +20,19 @@
                 type: Number,
                 required: true,
             },
-            headerText: {
+            greetingTitle: {
                 type: String,
-                default: "Incoming Phone Numbers"
+                required: true,
             },
-            lineList: {
-                type: Array,
-                default: () => [''],
+            valid: {
+                type: Boolean,
+                required: true,
             }
         },
         data() {
             return {
-                // lineList: ['5302232979', '5302249251'],
+                //
+                // headerText: 'On Hours Greeting',
             }
         },
         created() {
@@ -38,7 +40,6 @@
         },
         mounted() {
             //
-
         },
         computed: {
             //
@@ -47,9 +48,11 @@
             //
         },
         methods: {
+            //
             emitClick()
             {
-                this.eventHub.$emit('incoming-line-click', {nodeId: this.nodeId, data: this.lineList});
+                //
+                console.log('click');
             }
         },
     }

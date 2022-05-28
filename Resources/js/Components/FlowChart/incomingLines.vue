@@ -1,6 +1,7 @@
 <template>
     <b-card
         border-variant="dark"
+        :header-bg-variant="valid ? 'success' : 'info'"
         :header="headerText"
         align="center"
         class="pointer"
@@ -15,22 +16,26 @@
 <script>
     export default {
         props: {
+            headerText: {
+                type: String,
+                default: 'Incoming Phone Numbers'
+            },
             nodeId: {
                 type: Number,
                 required: true,
             },
-            headerText: {
-                type: String,
-                default: "Incoming Phone Numbers"
-            },
             lineList: {
                 type: Array,
-                default: () => [''],
+                required: true,
+            },
+            valid: {
+                type: Boolean,
+                required: true,
             }
         },
         data() {
             return {
-                // lineList: ['5302232979', '5302249251'],
+                //
             }
         },
         created() {
@@ -38,7 +43,6 @@
         },
         mounted() {
             //
-
         },
         computed: {
             //
@@ -49,7 +53,10 @@
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('incoming-line-click', {nodeId: this.nodeId, data: this.lineList});
+                this.eventHub.$emit('incoming-line-click', {
+                    nodeId: this.nodeId,
+                    data  : this.lineList
+                });
             }
         },
     }
