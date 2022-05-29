@@ -3,11 +3,11 @@
         border-variant="dark"
         align="center"
         class="pointer"
-        bg-variant="info"
+        :bg-variant="valid ? 'success' : 'info'"
         @click="emitClick"
     >
         <b-card-text>
-            {{text}}
+            {{title}}
         </b-card-text>
     </b-card>
 </template>
@@ -19,14 +19,18 @@
                 type: Number,
                 required: true,
             },
-            schedule: {
-                type: Object,
-                default: () => {},
+            valid: {
+                type: Boolean,
+                required: true,
+            },
+            title: {
+                type: String,
+                required: true,
             }
         },
         data() {
             return {
-                text: this.schedule.title,
+                //
             }
         },
         created() {
@@ -44,8 +48,11 @@
         methods: {
             emitClick()
             {
-                console.log('emitting');
-                this.eventHub.$emit('schedule-click', {nodeId: this.nodeId, data: this.schedule});
+                this.eventHub.$emit('change-buttons', {allowSchedule: false, allowGreeting: false, allowOption: false});
+                this.eventHub.$emit('dial-option-click', {
+                    nodeId  : this.nodeId,
+                    option  : this.title,
+                });
             }
         },
     }

@@ -9,7 +9,6 @@
             <p>If you are not sure where to start, use the <strong>Sample Greeting</strong> button
             for a generic greeting you can modify to fit your needs.</p>
         </b-modal>
-
         <ValidationObserver v-slot="{handleSubmit}">
             <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
                 <text-editor v-model="form.greeting" placeholder="Enter Greeting" label="Greeting Script" rules="required"></text-editor>
@@ -37,14 +36,19 @@
             greeting: {
                 type: String,
                 required: true,
+            },
+            usedOptions: {
+                type: Array,
+                default: () => [],
             }
         },
         data() {
             return {
-                submitted: false,
-                form: {
+                submitted  : false,
+                optionsUsed: this.usedOptions,
+                form       : {
                     greeting: this.greeting,
-                }
+                },
             }
         },
         created() {
@@ -52,13 +56,11 @@
         },
         mounted() {
             //
-            // this.reset();
         },
         computed: {
             //
         },
         watch: {
-            //
             greetingTitle()
             {
                 this.reset();
@@ -67,15 +69,19 @@
         methods: {
             save()
             {
-                var newGreet = this.form.greeting;
-                var saveData = {
-                    nodeId: this.nodeId,
-                    valid: true,
-                    greeting: newGreet,
+                var newGreet     = this.form.greeting;
+                var notedOptions = this.findOptions();
+                var saveData     = {
+                    nodeId       : this.nodeId,
+                    valid        : true,
+                    greeting     : newGreet,
                     greetingTitle: this.greetingTitle,
+                    usedOptions  : this.optionsUsed,
                 }
 
                 this.$emit('save', {nodeId: this.nodeId, data: saveData});
+                this.$emit('changeButtons', {allowSchedule: false, allowGreeting: false, allowOption: true});
+                this.eventHub.$emit('create-options', {nodeId: this.nodeId, data: notedOptions});
             },
             reset()
             {
@@ -88,6 +94,25 @@
                                ' 8 for a staff directory, or stay on the line to leave a general message';
 
                 this.form.greeting = sample;
+            },
+            findOptions()
+            {
+                const regex  = /(press|dial) \d/gmi;
+                var foundOpt = this.form.greeting.match(regex);
+                if(foundOpt == null)
+                {
+                    foundOpt = [];
+                }
+
+                //  Pull the numbers from the options so we know which ones are in use
+                foundOpt.forEach(opt => {
+                    var number = opt.match(/\d+/);
+                    this.optionsUsed.push(parseInt(number));
+                });
+
+                //  All AA's need a time out option, add this to the array
+                foundOpt.push('Time Out');
+                return foundOpt;
             }
         },
     }

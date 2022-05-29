@@ -44,7 +44,7 @@
                                 <div>
                                     <b-button v-if="allowSchedule" pill variant="info" @click="addSchedule">Add Schedule</b-button>
                                     <b-button v-if="allowGreeting" pill variant="info" @click="addGreeting('24/7 Greeting')">Add Greeting</b-button>
-                                    <!-- <b-button v-if="allowOption" pill variant="info">Add Option</b-button> -->
+                                    <b-button v-if="allowOption"   pill variant="info" @click="addOption('Press ?')">Add Option</b-button>
                                 </div>
                             </div>
                         </div>
@@ -93,11 +93,12 @@
         },
         data() {
             return {
-                loading:       false,
-                selectedId:    null,
-                lastId:        1,
+                loading      : false,
+                selectedId   : null,
+                lastId       : 1,
                 allowSchedule: false,
                 allowGreeting: false,
+                allowOption  : false,
                 formComponent: {
                     type: 'blank-data',
                     data: null,
@@ -172,6 +173,22 @@
             });
 
             /**
+             * Open the Dial Option form and load data
+             */
+            this.eventHub.$on('dial-option-click', data => {
+                this.loading       = true;
+                this.selectedId    = data.nodeId;
+                this.formComponent = {
+                    type: 'dial-opt-data',
+                    data: {
+                        nodeId: data.nodeId,
+                        option: data.option,
+                    }
+                }
+                this.loading = false;
+            })
+
+            /**
              * Create the on and off hours greetings
              */
             this.eventHub.$on('create-schedule-greetings', () => {
@@ -179,6 +196,23 @@
                 this.addGreeting('Off Hours Greeting');
             });
 
+            /**
+             * Add the options mentioned in the greeting to the flow chart
+             */
+            this.eventHub.$on('create-options', data => {
+                data.data.forEach(opt => {
+                    this.addOption(opt);
+                });
+            });
+
+            /**
+             * Change the buttons for adding options
+             */
+            this.eventHub.$on('change-buttons', data => {
+                this.allowSchedule = data.allowSchedule;
+                this.allowGreeting = data.allowGreeting;
+                this.allowOption   = data.allowOption;
+            });
         },
         computed: {
             //
@@ -242,6 +276,9 @@
                 this.allowSchedule = false;
                 this.allowGreeting = false;
             },
+            /**
+             * Add a greeting element to the flow chart
+             */
             addGreeting(title)
             {
                 this.lastId++;
@@ -251,16 +288,39 @@
                     nodeComponent: 'greeting',
                     data: {
                         //  Default data for a new greeting
-                        nodeId: this.lastId,
+                        nodeId       : this.lastId,
                         greetingTitle: title,
-                        greeting: 'test ',
-                        valid: false,
+                        greeting     : '',
+                        usedOptions  : [],
+                        valid        : false,
                     },
                 }
 
                 this.nodes.push(nodeData);
                 this.allowSchedule = false;
                 this.allowGreeting = false;
+            },
+            /**
+             * Add a one key dial option to the flow chart
+             */
+            addOption(opt)
+            {
+                console.log(opt);
+
+                this.lastId++;
+                const nodeData = {
+                    id           : this.lastId,
+                    parentId     : this.selectedId,
+                    nodeComponent: 'dial-opt',
+                    data: {
+                        //  Default data for a new dial option
+                        nodeId: this.lastId,
+                        valid: false,
+                        title: opt,
+                    },
+                }
+
+                this.nodes.push(nodeData);
             }
         }
     }

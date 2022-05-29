@@ -29,6 +29,10 @@
             valid: {
                 type: Boolean,
                 required: true,
+            },
+            usedOption: {
+                type: Array,
+                default: () => [],
             }
         },
         data() {
@@ -52,6 +56,7 @@
         methods: {
             emitClick()
             {
+                this.eventHub.$emit('change-buttons', {allowSchedule: false, allowGreeting: false, allowOption: true});
                 this.eventHub.$emit('greeting-click', {
                     nodeId  : this.nodeId,
                     title   : this.greetingTitle,
