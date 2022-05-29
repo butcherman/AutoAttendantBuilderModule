@@ -48,7 +48,7 @@
             return {
                 submitted: false,
                 form: {
-                    number: [''],
+                    number: this.lineList,
                 }
             }
         },

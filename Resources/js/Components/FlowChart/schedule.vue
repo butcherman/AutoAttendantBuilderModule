@@ -48,6 +48,7 @@
         methods: {
             emitClick()
             {
+                this.eventHub.$emit('change-buttons', {allowSchedule: false, allowGreeting: false, allowOption: false});
                 this.eventHub.$emit('schedule-click', {nodeId: this.nodeId, data: this.schedule});
             }
         },
