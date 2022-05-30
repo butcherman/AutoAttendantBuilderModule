@@ -35,10 +35,6 @@
     export default {
         components: { VuePhoneNumberInput },
         props: {
-            nodeId: {
-                type:     Number,
-                required: true,
-            },
             lineList: {
                 type:     Array,
                 required: true,
@@ -48,21 +44,12 @@
             return {
                 submitted: false,
                 form: {
-                    number: this.lineList,
+                    number: [],
                 }
             }
         },
-        created() {
-            //
-        },
         mounted() {
             this.reset();
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
         },
         methods: {
             /**
@@ -79,13 +66,7 @@
                     }
                 });
 
-                var saveData = {
-                    nodeId  : this.nodeId,
-                    valid   : true,
-                    lineList: newLines,
-                }
-                this.$emit('save', {nodeId: this.nodeId, data: saveData});
-                this.$emit('changeButtons', {allowSchedule: true, allowGreeting: true, allowOption: false});
+                this.$emit('save', { lineList: newLines });
             },
             /**
              * Reset the form back to its original state

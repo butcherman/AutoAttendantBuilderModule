@@ -3,11 +3,11 @@
         border-variant="dark"
         align="center"
         class="pointer"
-        :bg-variant="valid ? 'success' : 'info'"
+        :bg-variant="valid ? 'success' : 'warning'"
         @click="emitClick"
     >
         <b-card-text>
-            {{schedule.title}}
+            {{title}}
         </b-card-text>
     </b-card>
 </template>
@@ -19,37 +19,26 @@
                 type: Number,
                 required: true,
             },
-            schedule: {
-                type: Object,
-                default: () => {},
-            },
             valid: {
                 type: Boolean,
                 required: true,
+            },
+            hasChildren: {
+                type: Boolean,
+                required: true,
+            },
+            title: {
+                type: String,
+                required: true,
             }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
         },
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('change-buttons', {allowSchedule: false, allowGreeting: false, allowOption: false});
-                this.eventHub.$emit('schedule-click', {nodeId: this.nodeId, data: this.schedule});
+                this.eventHub.$emit('flow-component-click', {
+                    nodeId         : this.nodeId,
+                    actionComponent: 'schedule-action',
+                });
             }
         },
     }

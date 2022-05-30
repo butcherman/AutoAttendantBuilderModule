@@ -7,7 +7,20 @@ return [
     'name' => 'AutoAttendantBuilderModule',
     'ver'  => '0.0.0-dev',
 
+    /**
+     * If non-registered users are allowed to use this tool or not
+     */
     'allow_public_access' => false,
+
+    /**
+     * How long to save AA builds in the database for in days
+     */
+    'save_for' => 30,
+
+    /**
+     * Allow anyone to download the JSON data for saving the AA builds on their own
+     */
+    'allow_download' => true,
 
     /*
     *   Information for the Navbar

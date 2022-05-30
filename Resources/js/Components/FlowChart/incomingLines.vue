@@ -1,7 +1,7 @@
 <template>
     <b-card
         border-variant="dark"
-        :header-bg-variant="valid ? 'success' : 'info'"
+        :header-bg-variant="valid ? 'success' : 'warning'"
         :header="headerText"
         align="center"
         class="pointer"
@@ -16,46 +16,33 @@
 <script>
     export default {
         props: {
-            headerText: {
-                type: String,
-                default: 'Incoming Phone Numbers'
-            },
             nodeId: {
                 type: Number,
-                required: true,
-            },
-            lineList: {
-                type: Array,
                 required: true,
             },
             valid: {
                 type: Boolean,
                 required: true,
-            }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
+            },
+            hasChildren: {
+                type: Boolean,
+                required: true,
+            },
+            headerText: {
+                type: String,
+                default: 'Incoming Phone Lines'
+            },
+            lineList: {
+                type: Array,
+                required: true,
+            },
         },
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('incoming-line-click', {
-                    nodeId: this.nodeId,
-                    data  : this.lineList
+                this.eventHub.$emit('flow-component-click', {
+                    nodeId         : this.nodeId,
+                    actionComponent: 'incoming-line-action',
                 });
             }
         },

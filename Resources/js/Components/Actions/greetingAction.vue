@@ -1,14 +1,11 @@
 <template>
-    <b-card
-        border-variant="dark"
-        :header-bg-variant="valid ? 'success' : 'warning'"
-        :header="greetingTitle"
-        align="center"
-        class="pointer"
-        @click="emitClick"
-    >
-        <b-card-text v-html="greeting"></b-card-text>
-    </b-card>
+    <div class="text-center">
+        <b-button pill variant="info" v-b-modal.form-modal>Modify Greeting</b-button>
+        <b-button v-if="valid" pill variant="info">Add Dial Option</b-button>
+        <b-modal ref="form-modal" id="form-modal" :title="greetingTitle" hide-footer>
+            <greeting-form :greetingTitle="greetingTitle" :greeting="greeting" @save="saveData"></greeting-form>
+        </b-modal>
+    </div>
 </template>
 
 <script>
@@ -28,7 +25,7 @@
             },
             greetingTitle: {
                 type: String,
-                required: true
+                required: true,
             },
             greeting: {
                 type: String,
@@ -48,7 +45,10 @@
             //
         },
         mounted() {
-            //
+            if(!this.valid)
+            {
+                this.$refs['form-modal'].show();
+            }
         },
         computed: {
             //
@@ -57,12 +57,9 @@
             //
         },
         methods: {
-            emitClick()
+            saveData(data)
             {
-                this.eventHub.$emit('flow-component-click', {
-                    nodeId         : this.nodeId,
-                    actionComponent: 'greeting-action',
-                });
+                console.log(data);
             }
         },
     }

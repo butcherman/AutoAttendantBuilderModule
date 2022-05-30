@@ -15,7 +15,7 @@
             </p>
         </b-modal>
         <ValidationObserver v-slot="{handleSubmit}">
-            <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
+            <b-form @submit.prevent="handleSubmit(save)" novalidate>
                 <text-input v-model="form.title" rules="required" label="Schedule Name" name="title"></text-input>
                 <fieldset>
                     <label>Schedule Details</label>
@@ -37,7 +37,7 @@
                             </ValidationProvider>
                         </div>
                         <div class="col">
-                            <ValidationProvider v-slot="v" rules="required">
+                            <ValidationProvider v-slot="v" :rules="key == 0 ? 'required' : null">
                                 <b-form-checkbox-group
                                     v-model="sch.days"
                                     :options="days"
@@ -53,7 +53,7 @@
                 </fieldset>
                 <div class="text-center">
                     <b-button pill variant="success" type="submit">Save</b-button>
-                    <b-button pill variant="danger" type="reset">Reset</b-button>
+                    <b-button pill variant="danger" @click="reset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -64,18 +64,17 @@
     require('../../validateRules');
     export default {
         props: {
-            nodeId: {
-                type: Number,
+            title: {
+                type: String,
                 required: true,
             },
             schedule: {
-                type: Object,
+                type: Array,
                 required: true,
-            },
+            }
         },
         data() {
             return {
-                submitted: false,
                 days: [
                     {
                         text: 'Sun',
@@ -107,49 +106,15 @@
                     },
                 ],
                 form: {
-                    title   : this.schedule.title,
-                    schedule: this.schedule.schedule,
+                    title   : null,
+                    schedule: [],
                 }
             }
         },
-        created() {
-            //
-        },
         mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
+            this.reset();
         },
         methods: {
-            save()
-            {
-                //  Break the reactive state that causes updates to push back into props
-                var newSchedule = {
-                    title: this.form.title,
-                    schedule: this.form.schedule,
-                };
-
-                var saveData = {
-                    nodeId  : this.nodeId,
-                    valid   : true,
-                    schedule: newSchedule,
-                }
-
-                this.$emit('save', {nodeId: this.nodeId, data: saveData});
-                this.$emit('changeButtons', {allowSchedule: false, allowGreeting: false, allowOption: false});
-                this.eventHub.$emit('create-schedule-greetings');
-            },
-            reset()
-            {
-                this.form = {
-                    title   : this.schedule.title,
-                    schedule: this.schedule.schedule,
-                }
-            },
             addRow()
             {
                 this.form.schedule.push({
@@ -157,7 +122,26 @@
                     stop_time : null,
                     days      : [],
                 });
-            }
+            },
+            save()
+            {
+                //  Break the reactive state that causes updates to push back into props
+                var newSchedule = {
+                    title   : this.form.title,
+                    schedule: this.form.schedule,
+                };
+
+                this.$emit('save', newSchedule);
+            },
+            reset()
+            {
+                this.form.title = this.title;
+                this.form.schedule = [];
+
+                this.schedule.forEach(sch => {
+                    this.form.schedule.push(sch);
+                })
+            },
         },
     }
 </script>
