@@ -60,13 +60,13 @@
                 let onHoursData = {
                     greetingTitle   : 'On Hours Greeting',
                     greeting        : '',
-                    availableOptions: [0,1,2,3,4,5,6,7,8,9],
+                    availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
                 }
 
                 let offHoursData = {
                     greetingTitle   : 'Off Hours Greeting',
                     greeting        : '',
-                    availableOptions: [0,1,2,3,4,5,6,7,8,9],
+                    availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
                 }
 
                 this.giveBirth(onHoursData);

@@ -61,18 +61,21 @@
         methods: {
             saveData(data)
             {
+                //  Break the reactivity to the available options array
+                let newAvailableOptions = [];
+                this.availableOptions.forEach(opt => {
+                    newAvailableOptions.push(opt);
+                });
+
                 let greetOptions = this.findDialOptions(data.greeting);
                 greetOptions.forEach(opt => {
-                    let available = this.availableOptions.find((el, index) => {
-                        if(el == opt.optNum)
-                        {
-                            return index;
-                        }
-                    });
+                    let available = newAvailableOptions.indexOf(opt.optNum);
 
-                    if(available)
+                    console.log(available);
+
+                    if(available >= 0)
                     {
-                        this.availableOptions.splice(available, 1);
+                        newAvailableOptions.splice(available, 1);
                         this.addDialOption(opt.optNum, opt.verbage);
                     }
                 });
@@ -83,7 +86,7 @@
                     hasChildren     : this.hasChildren,
                     greetingTitle   : this.greetingTitle,
                     greeting        : data.greeting,
-                    availableOptions: this.availableOptions,
+                    availableOptions: newAvailableOptions,
                 });
                 this.$refs['form-modal'].hide();
             },
@@ -97,6 +100,7 @@
                         data: {
                             num: num,
                             verbage: verbage,
+                            availableOptions: this.availableOptions,
                         },
                     });
                 }

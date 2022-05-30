@@ -59,7 +59,7 @@
                     defaultData = {
                         greetingTitle   : '24/7 Greeting',
                         greeting        : '',
-                        availableOptions: [0,1,2,3,4,5,6,7,8,9],
+                        availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
                     }
                 }
                 else if(type === 'schedule')

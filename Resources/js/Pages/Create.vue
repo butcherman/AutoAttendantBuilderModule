@@ -22,7 +22,7 @@
                             </inertia-link>
                         </div>
                         <div id="flow-wrapper" class="row">
-                            <div class="col-12 border">
+                            <div class="col-12 border clearfix">
                                 <flowy :nodes="nodes"></flowy>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
         },
         data() {
             return {
-                lastId: 1,
+                lastId: 2,
                 activeNode: null,
                 nodes: [
                     {
@@ -154,10 +154,12 @@
     #builder-wrapper {
         color: #000000;
         height: calc(100vh - 75px);
+        overflow: auto;
     }
 
     #flow-wrapper {
         height: 80%;
+        overflow: scroll;
         background-size: 20px 20px;
         background-image:
             linear-gradient(to right, rgba(231, 228, 228, 0.719) 1px, transparent 1px),
@@ -166,5 +168,9 @@
 
     #action-wrapper {
         height: 10%;
+    }
+
+    .flowy-block {
+        max-width: 250px;
     }
 </style>
