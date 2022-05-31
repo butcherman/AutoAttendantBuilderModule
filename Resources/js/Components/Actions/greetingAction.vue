@@ -9,9 +9,11 @@
 </template>
 
 <script>
-    import upperFirst  from 'lodash/upperFirst';
+    import upperFirst   from 'lodash/upperFirst';
+    import greetingForm from '../Forms/greetingForm.vue';
 
     export default {
+        components: { greetingForm },
         props: {
             nodeId: {
                 type: Number,
@@ -70,8 +72,6 @@
                 let greetOptions = this.findDialOptions(data.greeting);
                 greetOptions.forEach(opt => {
                     let available = newAvailableOptions.indexOf(opt.optNum);
-
-                    console.log(available);
 
                     if(available >= 0)
                     {

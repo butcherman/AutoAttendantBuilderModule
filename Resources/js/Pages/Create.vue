@@ -33,6 +33,7 @@
                                     v-bind="actionComponent.data"
                                     @saveData="saveData"
                                     @giveBirth="giveBirth"
+                                    @deleteNode="deleteNode"
                                 ></component>
                             </div>
                         </div>
@@ -55,7 +56,7 @@
     /**
      * Register all flow chart and Form Data components
      */
-    const requireComponent = require.context('../Components', true, /(FlowChart || Actions)\/[A-Za-z-0-9]\w+\.vue$/);
+    const requireComponent = require.context('../Components', true, /(FlowChart|Actions)\/[A-Za-z-0-9]\w+\.vue$/);
     requireComponent.keys().forEach(fileName => {
         const componentConfig = requireComponent(fileName);
         const componentName   = upperFirst(camelCase(fileName.split('/').pop().replace(/\.\w+$/, '')));
@@ -72,21 +73,67 @@
         },
         data() {
             return {
-                lastId: 2,
+                lastId: 9,
                 activeNode: null,
                 nodes: [
+                    // {
+                    //     id           : 1,
+                    //     parentId     : -1,
+                    //     nodeComponent: 'incoming-lines',
+                    //     data: {
+                    //         nodeId     : 1,
+                    //         valid      : false,
+                    //         hasChildren: false,
+                    //         headerText : 'Start Here',
+                    //         lineList   : [''],
+                    //     },
+                    // },
+
+
+///////////////////////////////////// Testing Data ////////////////////////////////////
                     {
                         id           : 1,
                         parentId     : -1,
                         nodeComponent: 'incoming-lines',
                         data: {
                             nodeId     : 1,
-                            valid      : false,
-                            hasChildren: false,
-                            headerText : 'Start Here',
-                            lineList   : [''],
+                            valid      : true,
+                            hasChildren: true,
+                            headerText : 'Incoming Numbers',
+                            lineList   : ['(530) 223-2979'],
                         },
                     },
+                    {
+                        id           : 2,
+                        parentId     : 1,
+                        nodeComponent: 'greeting',
+                        data: {
+                            nodeId     : 2,
+                            valid      : true,
+                            hasChildren: true,
+                            greetingTitle   : '24/7 Greeting',
+                            greeting        : 'This is a Greeting',
+                            availableOptions: [0,1,2,3,4,5,6,7,8,9],
+                        },
+                    },
+                    {
+                        id           : 3,
+                        parentId     : 2,
+                        nodeComponent: 'dial-option',
+                        data: {
+                            nodeId     : 3,
+                            valid      : false,
+                            hasChildren: false,
+                            num: 11,
+                            verbage: 'Time Out',
+                            availableOptions: [0,1,2,3,4,5,6,7,8,9],
+                        },
+
+                    }
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
                 ],
                 actionComponent: {
                     type: null,
@@ -108,6 +155,34 @@
                     type: data.actionComponent,
                     data: this.activeNode.data,
                 }
+            });
+            /**
+             * If a one key dial option changed, we need to update the available options list
+             */
+            this.eventHub.$on('dial-option-changed', data => {
+                let parent = this.nodes.find(el => el.id == this.activeNode.parentId);
+                let availableOptions = parent.data.availableOptions;
+
+                //  add the new option back in if it was valid
+                if(Number(data.wasOption))
+                {
+                    availableOptions.push(data.wasOption);
+                }
+
+                //  Remove the new option from the availalbe list
+                let index = availableOptions.indexOf(data.newOption);
+                availableOptions.splice(index, 1);
+
+                //  Resort the array to put everything in order
+                availableOptions.sort((a, b) => { return a - b });
+
+                //  push the new options to the children of the parent node
+                this.nodes.forEach(node => {
+                    if(node.parentId == parent.id)
+                    {
+                        node.data.availableOptions = availableOptions;
+                    }
+                });
             });
         },
         computed: {
@@ -145,6 +220,35 @@
                 });
 
                 this.activeNode.data.hasChildren = true;
+            },
+            /**
+             * Delete the active Node from the flow tree - will also delete all child nodes
+             */
+            deleteNode()
+            {
+                let confirmed = false;
+
+                if(!this.activeNode.hasChildren)
+                {
+                    confirmed = true;
+                }
+                else
+                {
+                    this.$bvModal.msgBoxConfirm('This will also delete any items below this option', {
+                        title: 'Are You Sure?',
+                        buttonSize: 'sm',
+                        okVariant: 'danger',
+                        okTitle: 'YES',
+                        cancelTitle: 'NO',
+                        footerClass: 'p-2',
+                        hideHeaderClose: false,
+                        centered: true
+                    }).then(val => {
+                        confirmed = val;
+                    });
+                }
+
+                console.log(confirmed);
             }
         },
     }

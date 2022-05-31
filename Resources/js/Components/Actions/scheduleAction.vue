@@ -8,7 +8,10 @@
 </template>
 
 <script>
+    import scheduleForm from '../Forms/scheduleForm.vue';
+
     export default {
+        components: { scheduleForm },
         props: {
             nodeId: {
                 type: Number,
@@ -40,8 +43,6 @@
         methods: {
             saveData(data)
             {
-                console.log(data);
-
                 this.$emit('saveData', {
                     nodeId     : this.nodeId,
                     valid      : true,
