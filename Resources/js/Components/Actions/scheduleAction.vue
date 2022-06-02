@@ -2,7 +2,7 @@
     <div class="text-center">
         <b-button pill variant="info" v-b-modal.form-modal>Modify Schedule</b-button>
         <b-modal ref="form-modal" id="form-modal" title="Schedule" hide-footer>
-            <schedule-form :title="title" :schedule="schedule" @save="saveData"></schedule-form>
+            <schedule-form :headerText="node.data.headerText" :schedule="formSchedule" @save="saveData"></schedule-form>
         </b-modal>
     </div>
 </template>
@@ -13,72 +13,80 @@
     export default {
         components: { scheduleForm },
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            valid: {
-                type: Boolean,
-                required: true,
-            },
-            hasChildren: {
-                type: Boolean,
-                required: true,
-            },
-            title: {
-                type: String,
-                required: true,
-            },
-            schedule: {
-                type: Array,
+            node: {
+                type: Object,
                 required: true,
             }
         },
+        data() {
+            return {
+                //
+            }
+        },
+        created() {
+            //
+        },
         mounted() {
-            if(!this.valid)
+            //  If this data is not yet valid, open the form to edit
+            if(!this.node.valid)
             {
                 this.$refs['form-modal'].show();
             }
         },
+        computed: {
+            formSchedule()
+            {
+                let newSch = [];
+                this.node.data.schedule.forEach(elem => {
+                    let newObj = {
+                        start_time: elem.start_time,
+                        stop_time: elem.stop_time,
+                        days: [...elem.days],
+                    };
+
+                    newSch.push(newObj);
+                });
+
+                return newSch;
+            }
+        },
+        watch: {
+            //
+        },
         methods: {
             saveData(data)
             {
-                this.$emit('saveData', {
-                    nodeId     : this.nodeId,
-                    valid      : true,
-                    hasChildren: this.hasChildren,
-                    title      : data.title,
-                    schedule   : data.schedule,
-                });
+                this.node.valid           = true;
+                this.node.data.headerText = data.headerText;
+                this.node.data.schedule   = data.schedule;
+
                 this.$refs['form-modal'].hide();
+
                 this.buildGreetings();
             },
-            /**
-             * Build the on hours and off hours greetings
-             */
             buildGreetings()
             {
                 let onHoursData = {
-                    greetingTitle   : 'On Hours Greeting',
-                    greeting        : '',
+                    headerText: 'On Hours Greeting',
+                    greeting: '',
                     availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
                 }
 
                 let offHoursData = {
-                    greetingTitle   : 'Off Hours Greeting',
-                    greeting        : '',
+                    headerText: 'Off Hours Greeting',
+                    greeting: '',
                     availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
                 }
 
-                this.giveBirth(onHoursData);
-                this.giveBirth(offHoursData);
-            },
-            giveBirth(data)
-            {
                 this.$emit('giveBirth', {
-                    type: 'greeting',
-                    data: data,
+                    component: 'greeting',
+                    data     : onHoursData,
                 });
+                this.$emit('giveBirth', {
+                    component: 'greeting',
+                    data     : offHoursData,
+                });
+
             }
         },
     }

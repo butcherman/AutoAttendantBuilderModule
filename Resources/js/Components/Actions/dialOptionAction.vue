@@ -1,46 +1,26 @@
 <template>
     <div class="text-center">
         <b-button pill variant="info" v-b-modal.form-modal>Modify Option</b-button>
-        <b-button v-if="num !== 11" pill variant="danger" @click="remove">Delete Option</b-button>
+        <b-button v-if="node.data.num !== 11" pill variant="danger" @click="remove">Delete Option</b-button>
         <b-modal ref="form-modal" id="form-modal" title="One Key Options" hide-footer>
             <dial-option-form
-                :num="num"
-                :verbage="verbage"
-                :availableOptions="availableOptions"
-                @save="save"
+                :num="node.data.num"
+                :verbage="node.data.verbage"
+                :whatHappens="node.data.whatHappens"
+                :availableOptions="[...node.data.availableOptions]"
+                @save="saveData"
             ></dial-option-form>
         </b-modal>
     </div>
 </template>
 
 <script>
-    import dialOptionForm from '../Forms/dialOptionForm.vue';
-
+    import dialOptionForm from '../Forms/dialOptionForm.vue'
     export default {
         components: { dialOptionForm },
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            valid: {
-                type: Boolean,
-                required: true,
-            },
-            hasChildren: {
-                type: Boolean,
-                required: true,
-            },
-            num: {
-                type: Number|String,
-                required: true,
-            },
-            verbage: {
-                type: String,
-                required: true,
-            },
-            availableOptions: {
-                type: Array,
+            node: {
+                type: Object,
                 required: true,
             }
         },
@@ -59,32 +39,44 @@
             }
         },
         computed: {
-            //
+            isValid()
+            {
+                return this.node.valid;
+            }
         },
         watch: {
-            //
+            /**
+             * If we move to another similar component, we need to see if we should open the form again
+             */
+            isValid(val)
+            {
+                if(val === false)
+                {
+                    this.$refs['form-modal'].show();
+                }
+            }
         },
         methods: {
             remove()
             {
-                this.$emit('deleteNode');
+                console.log('remove node');
             },
-            save(data)
+            saveData(data)
             {
-                console.log(data);
-
-                //  Update the dialed option and repopulate available options
-                if(data.dialOption !== data.wasOption)
+                if(data.num !== data.wasOption)
                 {
-                    this.eventHub.$emit('dial-option-changed', {
-                        wasOption: data.wasOption,
-                        newOption: data.dialOption,
-                    });
+                    let index = this.node.data.availableOptions.indexOf(data.num);
+                    this.node.data.availableOptions.splice(index, 1, data.wasOption).sort((a, b) => {return a - b});
                 }
 
+                this.node.valid                = true;
+                this.node.data.num             = data.num;
+                this.node.data.whatHappens     = data.whatHappens;
+                this.node.data.targetExtension = data.targetExtension;
 
+                //  TODO - create child node
 
-                //  Determine the proper child to add to the flow chart
+                this.$refs['form-modal'].hide();
             }
         },
     }

@@ -1,68 +1,31 @@
 <template>
     <b-card
         border-variant="dark"
-        :header-bg-variant="valid ? 'success' : 'warning'"
-        :header="greetingTitle"
+        :header-bg-variant="node.valid ? 'success' : 'warning'"
+        :header="node.data.headerText"
         align="center"
         class="pointer"
         @click="emitClick"
     >
-        <b-card-text v-html="greeting"></b-card-text>
+        <b-card-text v-html="node.data.greeting"></b-card-text>
     </b-card>
 </template>
 
 <script>
+    import FlowTemplate from '../flowTemplate.vue';
+
     export default {
+        components: { FlowTemplate },
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            valid: {
-                type: Boolean,
-                required: true,
-            },
-            hasChildren: {
-                type: Boolean,
-                required: true,
-            },
-            greetingTitle: {
-                type: String,
-                required: true
-            },
-            greeting: {
-                type: String,
-                required: true,
-            },
-            availableOptions: {
-                type: Array,
+            node: {
+                type: Object,
                 required: true,
             }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
         },
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('flow-component-click', {
-                    nodeId         : this.nodeId,
-                    actionComponent: 'greeting-action',
-                });
+                this.eventHub.$emit('flow-component-click', this.node);
             }
         },
     }

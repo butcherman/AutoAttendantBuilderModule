@@ -1,52 +1,29 @@
 <template>
     <div class="text-center">
         <b-button pill variant="info" v-b-modal.form-modal>Modify Greeting</b-button>
-        <b-button v-if="valid" pill variant="info" @click="addDialOption('?', 'Press')">Add Dial Option</b-button>
-        <b-modal ref="form-modal" id="form-modal" :title="greetingTitle" hide-footer no-enforce-focus>
-            <greeting-form :greetingTitle="greetingTitle" :greeting="greeting" @save="saveData"></greeting-form>
+        <b-button v-if="node.valid" pill variant="info" @click="addDialOption('?', 'Press')">Add Dial Option</b-button>
+        <b-modal ref="form-modal" id="form-modal" :title="node.data.headerText" hide-footer no-enforce-focus>
+            <greeting-form :greetingTitle="node.data.headerText" :greeting="node.data.greeting" @save="saveData"></greeting-form>
         </b-modal>
     </div>
 </template>
 
 <script>
     import upperFirst   from 'lodash/upperFirst';
-    import greetingForm from '../Forms/greetingForm.vue';
+    import GreetingForm from '../Forms/greetingForm.vue';
 
     export default {
-        components: { greetingForm },
+        components: { GreetingForm },
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            valid: {
-                type: Boolean,
-                required: true,
-            },
-            hasChildren: {
-                type: Boolean,
-                required: true,
-            },
-            greetingTitle: {
-                type: String,
-                required: true,
-            },
-            greeting: {
-                type: String,
-                required: true,
-            },
-            availableOptions: {
-                type: Array,
+            node: {
+                type: Object,
                 required: true,
             }
         },
         data() {
             return {
-                optionCount: 11 - this.availableOptions.length,
+                optCount: 11 - this.node.data.availableOptions.length,
             }
-        },
-        created() {
-            //
         },
         mounted() {
             if(!this.valid)
@@ -55,53 +32,57 @@
             }
         },
         computed: {
-            //
+            isValid()
+            {
+                return this.node.valid;
+            }
         },
         watch: {
-            //
+            /**
+             * If we move to another similar component, we need to see if we should open the form again
+             */
+            isValid(val)
+            {
+                if(val === false)
+                {
+                    this.$refs['form-modal'].show();
+                }
+            }
         },
         methods: {
             saveData(data)
             {
-                //  Break the reactivity to the available options array
-                let newAvailableOptions = [];
-                this.availableOptions.forEach(opt => {
-                    newAvailableOptions.push(opt);
-                });
-
                 let greetOptions = this.findDialOptions(data.greeting);
                 greetOptions.forEach(opt => {
-                    let available = newAvailableOptions.indexOf(opt.optNum);
-
+                    let available = this.node.data.availableOptions.indexOf(opt.optNum);
                     if(available >= 0)
                     {
-                        newAvailableOptions.splice(available, 1);
+                        this.node.data.availableOptions.splice(available, 1);
                         this.addDialOption(opt.optNum, opt.verbage);
                     }
                 });
 
-                this.$emit('saveData', {
-                    nodeId          : this.nodeId,
-                    valid           : true,
-                    hasChildren     : this.hasChildren,
-                    greetingTitle   : this.greetingTitle,
-                    greeting        : data.greeting,
-                    availableOptions: newAvailableOptions,
-                });
+                this.node.valid = true;
+                this.node.data.greeting = data.greeting;
                 this.$refs['form-modal'].hide();
             },
+            /**
+             * Add a one key dial option to the greeting tree
+             */
             addDialOption(num, verbage)
             {
-                if(this.optionCount <= 10)
+                if(this.optCount <= 10)
                 {
-                    this.optionCount++;
+                    this.optCount++;
                     this.$emit('giveBirth', {
-                        type: 'dial-option',
+                        component: 'dialOption',
                         data: {
-                            num: num,
-                            verbage: verbage,
-                            availableOptions: this.availableOptions,
-                        },
+                            num,
+                            verbage,
+                            whatHappens: null,
+                            availableOptions: this.node.data.availableOptions,
+                            targetExtension: [],
+                        }
                     });
                 }
                 else
@@ -117,6 +98,7 @@
                 const regex  = /(press|dial) \d/gmi;
                 let foundOpt = greeting.match(regex);
 
+                //  The default option that is in every AA Tree is time out
                 let dialOptions = [
                     {
                         optNum: 11,

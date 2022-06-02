@@ -41,18 +41,10 @@
                 },
             }
         },
-        watch: {
-            greetingTitle()
-            {
-                this.reset();
-            }
-        },
         methods: {
             save()
             {
-                this.$emit('save', {
-                    greeting: this.form.greeting,
-                });
+                this.$emit('save', this.form);
             },
             reset()
             {
@@ -60,9 +52,9 @@
             },
             enterSample()
             {
-                const sample = 'Hello and thank you for calling ABC Company.  If you know the extension'+
-                               ' number of the person you are trying to reach, you may enter it now.  Press'+
-                               ' 8 for a staff directory, or stay on the line to leave a general message';
+                const sample = `Hello and thank you for calling ABC Company.  If you know the extension number
+                                of the person you are trying to reach, you may enter it at any time.  Press 8
+                                for a staff directory, or stay on the line to leave a general message.`;
 
                 this.form.greeting = sample;
             },

@@ -1,65 +1,27 @@
 <template>
     <b-card
-        border-variant="dark"
+        :border-variant="node.active ? 'info' : 'dark'"
+        :bg-variant="node.valid ? 'success' : 'warning'"
         align="center"
         class="pointer"
-        :bg-variant="valid ? 'success' : 'warning'"
         @click="emitClick"
     >
-        <b-card-text>
-            {{verbage}} {{num !== 11 ? num : ''}}
-        </b-card-text>
+        <b-card-text>{{node.data.verbage}} {{node.data.num !== 11 ? node.data.num : ''}}</b-card-text>
     </b-card>
 </template>
 
 <script>
     export default {
         props: {
-            nodeId: {
-                type: Number,
-                required: true,
-            },
-            valid: {
-                type: Boolean,
-                required: true,
-            },
-            hasChildren: {
-                type: Boolean,
-                required: true,
-            },
-            num: {
-                type: Number|String,
-                required: true,
-            },
-            verbage: {
-                type: String,
+            node: {
+                type: Object,
                 required: true,
             }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
         },
         methods: {
             emitClick()
             {
-                this.eventHub.$emit('flow-component-click', {
-                    nodeId         : this.nodeId,
-                    actionComponent: 'dial-option-action',
-                });
+                this.eventHub.$emit('flow-component-click', this.node);
             }
         },
     }

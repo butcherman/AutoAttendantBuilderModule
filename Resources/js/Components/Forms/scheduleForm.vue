@@ -16,11 +16,14 @@
         </b-modal>
         <ValidationObserver v-slot="{handleSubmit}">
             <b-form @submit.prevent="handleSubmit(save)" novalidate>
-                <text-input v-model="form.title" rules="required" label="Schedule Name" name="title"></text-input>
+                <text-input v-model="form.headerText" rules="required" label="Schedule Name" name="title"></text-input>
                 <fieldset>
                     <label>Schedule Details</label>
                     <div class="row my-4 border-top" v-for="(sch, key) in form.schedule" :key="key">
-                        <div class="col-md-6">
+                        <div class="col-md-1">
+                            <i v-if="key !== 0" class="fas fa-trash-alt pointer text-danger" title="Remove Entry" v-b-tooltip.hover @click="removeRow(key)"></i>
+                        </div>
+                        <div class="col-md-5">
                             <ValidationProvider v-slot="v" :rules="key == 0 ? 'required' : null" name="start_time">
                                 <b-form-group label="Start Time:" label-for="start_time">
                                     <b-form-timepicker v-model="sch.start_time" locale="en"></b-form-timepicker>
@@ -28,7 +31,7 @@
                                 </b-form-group>
                             </ValidationProvider>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <ValidationProvider v-slot="v" rules="after-start:@start_time" name="stop_time">
                                 <b-form-group label="Stop Time:" label-for="stop_time">
                                     <b-form-timepicker v-model="sch.stop_time" locale="en"></b-form-timepicker>
@@ -37,7 +40,7 @@
                             </ValidationProvider>
                         </div>
                         <div class="col">
-                            <ValidationProvider v-slot="v" :rules="key == 0 ? 'required' : null">
+                            <ValidationProvider v-slot="v" :rules="key == 0 || sch.start_time !== null ? 'required' : null">
                                 <b-form-checkbox-group
                                     v-model="sch.days"
                                     :options="days"
@@ -62,9 +65,10 @@
 
 <script>
     require('../../validateRules');
+
     export default {
         props: {
-            title: {
+            headerText: {
                 type: String,
                 required: true,
             },
@@ -106,8 +110,8 @@
                     },
                 ],
                 form: {
-                    title   : null,
-                    schedule: [],
+                    headerText: this.headerText,
+                    schedule  : [],
                 }
             }
         },
@@ -123,24 +127,30 @@
                     days      : [],
                 });
             },
+            removeRow(index)
+            {
+                this.form.schedule.splice(index, 1);
+            },
             save()
             {
-                //  Break the reactive state that causes updates to push back into props
-                var newSchedule = {
-                    title   : this.form.title,
-                    schedule: this.form.schedule,
-                };
-
-                this.$emit('save', newSchedule);
+                this.$emit('save', this.form);
             },
             reset()
             {
-                this.form.title = this.title;
-                this.form.schedule = [];
+                this.form = {
+                    headerText: this.headerText,
+                    schedule  : [],
+                }
 
-                this.schedule.forEach(sch => {
-                    this.form.schedule.push(sch);
-                })
+                this.schedule.forEach(elem => {
+                    let newObj = {
+                        start_time: elem.start_time,
+                        stop_time: elem.stop_time,
+                        days: [...elem.days],
+                    };
+
+                    this.form.schedule.push(newObj);
+                });
             },
         },
     }

@@ -9,7 +9,7 @@
             <p>We will need the full area code and number for each phone number that will ring into the AA</p>
             <p>You must enter at least one phone number to continue</p>
         </b-modal>
-        <ValidationObserver v-slot="{handleSubmit}" ref="lineForm">
+        <ValidationObserver v-slot="{ handleSubmit }" ref="lineForm">
             <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
                 <div v-for="(num, key) in form.number" :key="key" class="mb-2">
                     <ValidationProvider v-slot="v" :rules="key == 0 ? 'required' : null" mode="lazy">
@@ -22,7 +22,7 @@
                 </div>
                 <div class="text-center">
                     <b-button pill variant="success" type="submit">Save</b-button>
-                    <b-button pill variant="danger"  type="reset">Reset</b-button>
+                    <b-button pill variant="danger"  type="reset" @click="reset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -42,22 +42,28 @@
         },
         data() {
             return {
-                submitted: false,
                 form: {
-                    number: [],
+                    number: [...this.lineList],
                 }
             }
         },
+        created() {
+            //
+        },
         mounted() {
-            this.reset();
+            // 
+        },
+        computed: {
+            //
+        },
+        watch: {
+            //
         },
         methods: {
-            /**
-             * Save the inputted data to the flow chart
-             */
+            //
             save()
             {
-                //  Break the reactive state that causes updates to push back into props
+                //  Remove any blank entries
                 var newLines = [];
                 this.form.number.forEach(num => {
                     if(num !== null)
@@ -68,16 +74,9 @@
 
                 this.$emit('save', { lineList: newLines });
             },
-            /**
-             * Reset the form back to its original state
-             */
             reset()
             {
-                this.form.number = [];
-
-                this.lineList.forEach(num => {
-                    this.form.number.push(num);
-                });
+                this.form.number = [...this.lineList];
             }
         },
     }

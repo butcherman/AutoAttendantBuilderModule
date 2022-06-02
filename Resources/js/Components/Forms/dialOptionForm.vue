@@ -1,14 +1,22 @@
 <template>
     <div>
-        <ValidationObserver v-slot="{handleSubmit, reset}">
-            <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
+        <h4 class="text-center text-dark">
+            What Happens On This Option
+            <i class="far fa-question-circle pointer" title="Help" v-b-tooltip.hover v-b-modal.help-modal></i>
+        </h4>
+        <b-modal id="help-modal" title="Help" ok-only>
+            <p>Each one key option must have some type of destination.</p>
+            <p>Use this form to tell us what that destination is.</p>
+        </b-modal>
+        <ValidationObserver v-slot="{handleSubmit}">
+            <b-form @submit.prevent="handleSubmit(save)" novalidate>
                 <dropdown-input
                     v-if="num !== 11"
-                    v-model="form.dialOption"
+                    v-model="form.num"
                     rules="required"
                     name="dialOption"
                     :label="verbage"
-                    :options="availableOptions"
+                    :options="dropDownList"
                 ></dropdown-input>
                 <dropdown-input
                     v-model="form.whatHappens"
@@ -33,7 +41,7 @@
                 </Transition>
                 <div class="text-center mt-3">
                     <b-button pill variant="success" type="submit">Save</b-button>
-                    <b-button pill variant="danger" type="reset">Reset</b-button>
+                    <b-button pill variant="danger" @click="reset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -44,11 +52,15 @@
     export default {
         props: {
             num: {
-                type: Number|String,
+                type: Number,
                 required: true,
             },
             verbage: {
                 type: String,
+                required: true,
+            },
+            whatHappens: {
+                type: String|null,
                 required: true,
             },
             availableOptions: {
@@ -59,13 +71,14 @@
         data() {
             return {
                 form: {
-                    dialOption     : this.num,
+                    num            : this.num,
                     wasOption      : this.num,
-                    whatHappens    : null,
+                    whatHappens    : this.whatHappens,
                     targetExtension: [],
                 },
                 addingExt: null,
                 whatHappensOptions: [
+                    '',
                     'Play Greeting',
                     'Take Message',
                     'Ring Phone(s)',
@@ -75,17 +88,17 @@
                 ],
             }
         },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
         computed: {
-            //
-        },
-        watch: {
-            //
+            dropDownList()
+            {
+                let newList = [...this.availableOptions]
+                if(newList.indexOf(this.num) === -1)
+                {
+                    newList.push(this.num);
+                }
+
+                return newList.sort((a, b) => {return a - b});
+            }
         },
         methods: {
             save()
@@ -94,7 +107,9 @@
             },
             reset()
             {
-                console.log('reset');
+                this.form.num             = this.num;
+                this.form.whatHappens     = '';
+                this.form.targetExtension = [];
             },
             addExt()
             {
