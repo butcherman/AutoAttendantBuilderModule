@@ -52,7 +52,7 @@
     export default {
         props: {
             num: {
-                type: Number,
+                type: Number|String,
                 required: true,
             },
             verbage: {
@@ -92,7 +92,7 @@
             dropDownList()
             {
                 let newList = [...this.availableOptions]
-                if(newList.indexOf(this.num) === -1)
+                if(newList.indexOf(this.num) === -1  && this.num !== '?')
                 {
                     newList.push(this.num);
                 }

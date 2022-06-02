@@ -32,6 +32,7 @@
                                     :is="activeNode.nodeComponent+'-action'"
                                     :node="activeNode"
                                     @giveBirth="giveBirth"
+                                    @removeChildren="removeChildren"
                                 ></component>
                             </div>
                         </div>
@@ -85,9 +86,8 @@
              */
             this.createNode(-1, 'incoming-lines', {
                 headerText: 'Start Here',
-                lineList: ['(530) 741-2044'],
+                lineList: [''],
             });
-
             /**
              * Capture a node click event to make it active
              */
@@ -134,6 +134,19 @@
                 this.activeNode.active = false;
                 this.activeNode = node;
                 this.activeNode.active = true;
+            },
+            /**
+             * Delete all Children nodes for the active node
+             */
+            removeChildren()
+            {
+                for(let node of this.nodes)
+                {
+                    if(node.parentId == this.activeNode.id)
+                    {
+                        this.nodes.splice(this.nodes.indexOf(node), 1);
+                    }
+                }
             }
         },
     }

@@ -75,8 +75,48 @@
                 this.node.data.targetExtension = data.targetExtension;
 
                 //  TODO - create child node
+                this.giveBirth(data.whatHappens, data.targetExtension);
+
 
                 this.$refs['form-modal'].hide();
+            },
+            giveBirth(toWho, addData = null)
+            {
+                let defaultData = {};
+                let componentType = null;
+
+                switch(toWho)
+                {
+                    case 'Hang Up':
+                    case 'Repeat':
+                    case 'Staff Directory':
+                        componentType = 'textBlock';
+                        defaultData.text = toWho;
+                        break;
+                    case 'Ring Phone(s)':
+                    case 'Take Message':
+                        componentType = 'gotoPhones';
+                        defaultData.headerText = toWho;
+                        defaultData.extList = addData;
+                        break;
+                    case 'Play Greeting':
+                        componentType = 'greeting';
+                        defaultData = {
+                            headerText      : 'Sub Greeting',
+                            greeting        : '',
+                            availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
+                        }
+                }
+
+                if(this.node.hasChildren)
+                {
+                    this.$emit('removeChildren');
+                }
+
+                this.$emit('giveBirth', {
+                    component: componentType,
+                    data     : defaultData
+                });
             }
         },
     }
