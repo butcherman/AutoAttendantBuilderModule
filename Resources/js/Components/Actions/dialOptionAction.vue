@@ -24,33 +24,28 @@
                 required: true,
             }
         },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
         mounted() {
-            if(!this.valid)
+            if(!this.node.valid)
             {
                 this.$refs['form-modal'].show();
             }
         },
         computed: {
-            isValid()
+            nodeId()
             {
-                return this.node.valid;
+                return this.node.id;
             }
         },
         watch: {
             /**
              * If we move to another similar component, we need to see if we should open the form again
              */
-            isValid(val)
+            nodeId(newId, oldId)
             {
-                if(val === false)
+                console.log('new '+newId);
+                console.log('old '+oldId);
+                console.log(this.node.valid);
+                if(!this.node.valid)
                 {
                     this.$refs['form-modal'].show();
                 }
@@ -59,7 +54,7 @@
         methods: {
             remove()
             {
-                console.log('remove node');
+                this.$emit('deleteMe');
             },
             saveData(data)
             {
@@ -74,7 +69,6 @@
                 this.node.data.whatHappens     = data.whatHappens;
                 this.node.data.targetExtension = data.targetExtension;
 
-                //  TODO - create child node
                 this.giveBirth(data.whatHappens, data.targetExtension);
 
 

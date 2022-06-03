@@ -1,16 +1,11 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::prefix('auto-attendant-builder')->name('AutoAttendantBuilderModule.')->group(function() {
-    Route::get('/', 'AutoAttendantBuilderModuleController@index')->name('index');
+    Route::get(   '/',           'AutoAttendantBuilderModuleController@index')  ->name('index');
+    Route::get(   'create',      'AutoAttendantBuilderModuleController@create') ->name('create');
+    Route::post(  '/',           'AutoAttendantBuilderModuleController@store')  ->name('store');
+    Route::get(   '{uuid}',      'AutoAttendantBuilderModuleController@show')   ->name('show');
+    Route::get(   '{uuid}/edit', 'AutoAttendantBuilderModuleController@edit')   ->name('edit');
+    Route::put(   '{uuid}/edit', 'AutoAttendantBuilderModuleController@update') ->name('update');
+    Route::delete('{uuid}',      'AutoAttendantBuilderModuleController@destroy')->name('destroy');
 });

@@ -1,5 +1,5 @@
 <template>
-    <div id="">
+    <div>
         <div class="row">
             <div class="col-12 mt-4">
                 <h2 class="text-center">Auto Attendant Builder</h2>
@@ -20,6 +20,9 @@
                             >
                                 Return to Tech Bench
                             </inertia-link>
+                            <b-button pill variant="info" size="sm" @click="saveTree">Save</b-button>
+                            <b-button pill variant="info" size="sm" @click="downloadTree">Download</b-button>
+                            <b-button pill variant="danger" size="sm" @click="startOver">Start Over</b-button>
                         </div>
                         <div id="flow-wrapper" class="row">
                             <div class="col-12 border clearfix">
@@ -203,6 +206,50 @@
 
                     node.hasChildren = hasChild;
                 }
+            },
+            /**
+             * Delete the entire tree and start over
+             */
+            startOver()
+            {
+                this.$bvModal.msgBoxConfirm('Everything will be removed.  This cannot be undone.', {
+                    title: 'Are You Sure?',
+                    size: 'sm',
+                    buttonSize: 'sm',
+                    okVariant: 'danger',
+                    okTitle: 'YES',
+                    cancelTitle: 'NO',
+                    footerClass: 'p-2',
+                    hideHeaderClose: false,
+                    centered: true
+                })
+                .then(value => {
+                    if(value)
+                    {
+                        this.idIndex = 0;
+                        this.activeNode = {};
+                        this.nodes = [];
+
+                        this.createNode(-1, 'incoming-lines', {
+                            headerText: 'Start Here',
+                            lineList: [''],
+                        });
+                    }
+                });
+            },
+            /**
+             * Save the tree in a database entry to be pulled later
+             */
+            saveTree()
+            {
+                alert('Feature Coming Soon!!');
+            },
+            /**
+             * Download a JSON file containing the tree information
+             */
+            downloadTree()
+            {
+                alert('Feature Coming Soon!!');
             }
         },
     }

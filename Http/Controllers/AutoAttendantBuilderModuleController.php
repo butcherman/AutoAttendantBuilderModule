@@ -23,7 +23,7 @@ class AutoAttendantBuilderModuleController extends Controller
      */
     public function index()
     {
-        return Inertia::render('AutoAttendantBuilderModule::Create', [
+        return Inertia::render('AutoAttendantBuilderModule::Index', [
             'auth' => Auth::check() ? true : false,
         ]);
     }
