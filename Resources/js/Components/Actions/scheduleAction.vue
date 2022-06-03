@@ -1,6 +1,7 @@
 <template>
     <div class="text-center">
         <b-button pill variant="info" v-b-modal.form-modal>Modify Schedule</b-button>
+        <b-button pill variant="danger" @click="verifyDelete">Delete Schedule</b-button>
         <b-modal ref="form-modal" id="form-modal" title="Schedule" hide-footer>
             <schedule-form :headerText="node.data.headerText" :schedule="formSchedule" @save="saveData"></schedule-form>
         </b-modal>
@@ -17,14 +18,6 @@
                 type: Object,
                 required: true,
             }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
         },
         mounted() {
             //  If this data is not yet valid, open the form to edit
@@ -49,9 +42,6 @@
 
                 return newSch;
             }
-        },
-        watch: {
-            //
         },
         methods: {
             saveData(data)
@@ -86,7 +76,10 @@
                     component: 'greeting',
                     data     : offHoursData,
                 });
-
+            },
+            verifyDelete()
+            {
+                this.$emit('deleteMe');
             }
         },
     }

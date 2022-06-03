@@ -1,10 +1,10 @@
 <template>
     <b-card
-        border-variant="dark"
         :header-bg-variant="node.valid ? 'success' : 'warning'"
         :header="node.data.headerText"
         align="center"
         class="pointer"
+        :class="node.active ? 'active-node' : ''"
         @click="emitClick"
     >
         <b-card-text v-html="node.data.greeting"></b-card-text>

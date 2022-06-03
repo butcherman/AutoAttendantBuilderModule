@@ -1,9 +1,9 @@
 <template>
     <b-card
-        :border-variant="node.active ? 'info' : 'dark'"
         :bg-variant="node.valid ? 'success' : 'warning'"
         align="center"
         class="pointer"
+        :class="node.active ? 'active-node' : ''"
         @click="emitClick"
     >
         <b-card-text>{{node.data.headerText}}</b-card-text>

@@ -1,11 +1,11 @@
 <template>
     <b-card
-        :border-variant="node.active ? 'info' : 'dark'"
         :header-bg-variant="node.valid ? 'success' : 'warning'"
-        :bg-variant="node.active ? 'info' : 'light'"
+        bg-variant="light"
         :header="node.data.headerText"
         align="center"
         class="pointer"
+        :class="node.active ? 'active-node' : ''"
         @click="emitClick"
     >
         <b-card-text>
@@ -21,9 +21,6 @@
                 type: Object,
                 required: true,
             }
-        },
-        computed: {
-            //
         },
         methods: {
             emitClick()

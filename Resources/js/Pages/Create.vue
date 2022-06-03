@@ -32,6 +32,7 @@
                                     :is="activeNode.nodeComponent+'-action'"
                                     :node="activeNode"
                                     @giveBirth="giveBirth"
+                                    @deleteMe="deleteActiveNode"
                                     @removeChildren="removeChildren"
                                 ></component>
                             </div>
@@ -136,6 +137,33 @@
                 this.activeNode.active = true;
             },
             /**
+             * Process for removing the selected (active) node and its children
+             */
+            deleteActiveNode()
+            {
+                this.$bvModal.msgBoxConfirm('Everything attached below this component will also be deleted.', {
+                    title: 'Are You Sure?',
+                    size: 'sm',
+                    buttonSize: 'sm',
+                    okVariant: 'danger',
+                    okTitle: 'YES',
+                    cancelTitle: 'NO',
+                    footerClass: 'p-2',
+                    hideHeaderClose: false,
+                    centered: true
+                })
+                .then(value => {
+                    if(value)
+                    {
+                        let parent = this.nodes.find(ele => { ele.id === parent });
+                        this.removeChildren();
+                        this.deleteNode(this.activeNode);
+                        this.activeNode = {};
+                        this.updateChildren();
+                    }
+                });
+            },
+            /**
              * Delete all Children nodes for the active node
              */
             removeChildren()
@@ -144,8 +172,36 @@
                 {
                     if(node.parentId == this.activeNode.id)
                     {
-                        this.nodes.splice(this.nodes.indexOf(node), 1);
+                        this.deleteNode(node);
+                        this.removeChildren();
                     }
+                }
+            },
+            /**
+             * Delete a node from the tree
+             */
+            deleteNode(node)
+            {
+                this.nodes.splice(this.nodes.indexOf(node), 1);
+            },
+            /**
+             * Check all nodes to see if it has any children
+             */
+            updateChildren()
+            {
+                for(let node of this.nodes)
+                {
+                    let hasChild = false;
+
+                    for(let child of this.nodes)
+                    {
+                        if(child.parentId === node.id)
+                        {
+                            hasChild = true;
+                        }
+                    }
+
+                    node.hasChildren = hasChild;
                 }
             }
         },
