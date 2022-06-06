@@ -43,9 +43,6 @@
              */
             nodeId(newId, oldId)
             {
-                console.log('new '+newId);
-                console.log('old '+oldId);
-                console.log(this.node.valid);
                 if(!this.node.valid)
                 {
                     this.$refs['form-modal'].show();

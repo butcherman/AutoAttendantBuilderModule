@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="row justify-content-center grid-margin">
                                     <div class="col-md-3 text-right">
-                                        <b-button block variant="info" pill>Start the Wizard</b-button>
+                                        <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.wizard')" block variant="info" pill>Start the Wizard</inertia-link>
                                     </div>
                                     <div class="col-md-4">
                                         <p>The Auto Attendant Wizard will walk you step by step through building your Auto Attendant Tree</p>

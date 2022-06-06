@@ -13,7 +13,7 @@
             <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
                 <text-editor v-model="form.greeting" placeholder="Enter Greeting" label="Greeting Script" rules="required"></text-editor>
                 <div class="text-center">
-                    <b-button pill variant="success" type="submit">Save</b-button>
+                    <b-button pill variant="success" type="submit">{{saveText}}</b-button>
                     <b-button pill variant="danger" @click="reset">Reset</b-button>
                     <b-button pill variant="info" @click="enterSample">Sample Greeting</b-button>
                 </div>
@@ -32,6 +32,11 @@
             greeting: {
                 type: String,
                 required: true,
+            },
+            saveText: {
+                type: String,
+                required: false,
+                default: 'Save',
             }
         },
         data() {

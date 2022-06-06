@@ -21,7 +21,7 @@
                     <b-button size="sm" pill class="float-right" variant="info" @click="form.number.push('')"><i class="fas fa-plus d-none d-sm-inline" aria-hidden="true"></i> Add</b-button>
                 </div>
                 <div class="text-center">
-                    <b-button pill variant="success" type="submit">Save</b-button>
+                    <b-button pill variant="success" type="submit">{{saveText}}</b-button>
                     <b-button pill variant="danger"  type="reset" @click="reset">Reset</b-button>
                 </div>
             </b-form>
@@ -38,7 +38,12 @@
             lineList: {
                 type:     Array,
                 required: true,
-            }
+            },
+            saveText: {
+                type: String,
+                required: false,
+                default: 'save',
+            },
         },
         data() {
             return {
@@ -47,20 +52,7 @@
                 }
             }
         },
-        created() {
-            //
-        },
-        mounted() {
-            // 
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
-        },
         methods: {
-            //
             save()
             {
                 //  Remove any blank entries

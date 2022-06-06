@@ -55,7 +55,7 @@
                     </div>
                 </fieldset>
                 <div class="text-center">
-                    <b-button pill variant="success" type="submit">Save</b-button>
+                    <b-button pill variant="success" type="submit">{{saveText}}</b-button>
                     <b-button pill variant="danger" @click="reset">Reset</b-button>
                 </div>
             </b-form>
@@ -75,6 +75,11 @@
             schedule: {
                 type: Array,
                 required: true,
+            },
+            saveText: {
+                type: String,
+                required: false,
+                default: 'Save',
             }
         },
         data() {
