@@ -1,0 +1,18 @@
+{
+    "name": "AutoAttendantBuilderModule",
+    "alias": "autoattendantbuildermodule",
+    "description": "Graphical tool to assist in building Auto Attendant menus for businesses",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AutoAttendantBuilderModule\\Providers\\AutoAttendantBuilderModuleServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": {
+        "Tech_Bench": "6.3",
+        "npm" : [
+            "@hipsjs/flowy-vue"
+        ]
+    }
+}
