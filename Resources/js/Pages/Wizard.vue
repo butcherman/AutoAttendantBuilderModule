@@ -115,19 +115,15 @@
                 this.activeStep.nextStep = data;
 
                 let next = data.shift();
-                console.log(next);
                 this.buildStep(next.component, next.node, next.data);
             },
             endOfLine()
             {
-                console.log('end of the line');
-
                 for(let i = this.progress.length - 1; i >= 0; i--)
                 {
                     if(this.progress[i].nextStep && this.progress[i].nextStep.length)
                     {
                         let next = this.progress[i].nextStep.shift();
-                        console.log(next);
                         this.buildStep(next.component, next.node, next.data);
                         break;
                     }

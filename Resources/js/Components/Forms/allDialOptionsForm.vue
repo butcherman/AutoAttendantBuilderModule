@@ -122,14 +122,11 @@
             },
             addExt(extArr)
             {
-                console.log('add ext');
                 extArr.push(this.addingExt);
                 this.addingExt =null;
             },
             remExt(ext, extArr)
             {
-                console.log('rem ext');
-
                 extArr.splice(extArr.indexOf(ext), 1);
             }
         },

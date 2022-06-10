@@ -56,6 +56,7 @@
             save(data)
             {
                 this.activeStep.node.data = data;
+                this.activeStep.node.data.headerText = 'Incoming Phone Lines';
 
                 let nextStep = [
                     {
