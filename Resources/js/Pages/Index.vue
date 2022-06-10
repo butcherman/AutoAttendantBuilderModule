@@ -5,7 +5,7 @@
                 <h2 class="text-center">Auto Attendant Builder</h2>
             </div>
         </div>
-        <div id="home-wrapper" class="row justify-content-center p-4">
+        <div id="builder-wrapper" class="row justify-content-center p-4">
             <div class="col h-100">
                 <div class="card h-100">
                     <div class="card-body h-100">
@@ -20,7 +20,6 @@
                             >
                                 Return to Tech Bench
                             </inertia-link>
-
                         </div>
                         <div class="row">
                             <div class="col-12 clearfix">
@@ -110,11 +109,3 @@
         },
     }
 </script>
-
-<style>
-    #home-wrapper {
-        color: #000000;
-        height: calc(100vh - 75px);
-        overflow: auto;
-    }
-</style>

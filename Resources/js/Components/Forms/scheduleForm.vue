@@ -55,8 +55,9 @@
                     </div>
                 </fieldset>
                 <div class="text-center">
+                    <b-button pill variant="info" @click="back" v-if="showBack">Back</b-button>
                     <b-button pill variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button pill variant="danger" @click="reset">Reset</b-button>
+                    <b-button v-if="!hideReset" pill variant="danger" @click="reset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -80,6 +81,16 @@
                 type: String,
                 required: false,
                 default: 'Save',
+            },
+            hideReset: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            showBack: {
+                type: Boolean,
+                required: false,
+                default: false,
             }
         },
         data() {
@@ -157,6 +168,10 @@
                     this.form.schedule.push(newObj);
                 });
             },
+            back()
+            {
+                this.$emit('back');
+            }
         },
     }
 </script>

@@ -5,10 +5,10 @@
                 <h2 class="text-center">Auto Attendant Builder</h2>
             </div>
         </div>
-        <div id="wizard-wrapper" class="row justify-content-center p-4">
+        <div id="builder-wrapper" class="row justify-content-center p-4">
             <div class="col h-100">
                 <div class="card h-100">
-                    <div class="card-body h-100" style="overflow-y: scroll">
+                    <div class="card-body h-100">
                         <div class="card-title text-center">
                             <inertia-link
                                 v-if="auth"
@@ -22,15 +22,13 @@
                             </inertia-link>
                         </div>
                         <div class="row h-100">
-                            <div class="col-12">
-                                <h3 class="text-center text-dark mt-2 mb-1">Step {{step}}</h3>
+                            <div class="col-12 h-100 overflow-scroll">
                                 <Transition name="swipe" mode="out-in">
                                     <component
                                         :is="wizComponent"
-                                        :node="activeNode"
+                                        :activeStep="activeStep"
                                         @nextStep="nextStep"
-                                        @nextNode="nextNode"
-                                        @buildGreetOptions="buildGreetOptions"
+                                        @endOfLine="endOfLine"
                                     ></component>
                                 </Transition>
                             </div>
@@ -46,6 +44,8 @@
     import Vue         from 'vue';
     import upperFirst  from 'lodash/upperFirst';
     import camelCase   from 'lodash/camelCase';
+
+    import { NewNode } from '../Modules/defaultData';
 
     /**
      * Register all wizard components
@@ -67,123 +67,77 @@
         },
         data() {
             return {
-                step: 1,
-                idIndex: 0,
-                wizComponent: 'step1',
-                activeNode: {},
-                nodes: [],
+                stepId: 0,
+                nodeId: 0,
+                wizComponent: 'incomingLinesWizard',
+                activeStep: {},
+                progress: [],
             }
         },
         created() {
             //
         },
         mounted() {
-            /**
-             * Create the initial node
-             */
-            this.createNode(-1, 'incoming-lines', {
-                headerText: 'Incoming Phone Lines',
-                lineList: ['', '', ''],
-            }, true);
+            //
+            this.buildStep('incoming-lines-wizard', new NewNode(-1, 'incoming-lines', {}));
         },
         computed: {
-            // wizComponent()
-            // {
-            //     return 'step'+this.step;
-            // }
+            //
         },
         watch: {
             //
         },
         methods: {
-            /**
-             * Create a new Flow Chart Node
-             */
-            createNode(parentId, nodeComponent, data, setActive = false)
+            buildStep(component, node, data)
             {
-                let newNode = {
-                    id: this.idIndex++,
-                    parentId,
-                    nodeComponent,
+                if(node)
+                {
+                    node.id = this.nodeId++;
+                }
+
+                let newStep = {
+                    id: this.stepId++,
+                    component,
+                    node,
                     data,
-                    valid      : false,
-                    active     : false,
-                    hasChildren: false,
-                };
-
-                this.nodes.push(newNode);
-                if(setActive)
-                {
-                    this.activeNode = newNode;
                 }
 
-                if(parentId >= 0)
+                this.progress.push(newStep);
+                this.setActiveStep(newStep);
+                this.wizComponent = component;
+            },
+            setActiveStep(node)
+            {
+                this.activeStep = node;
+            },
+            nextStep(data)
+            {
+                this.activeStep.nextStep = data;
+
+                let next = data.shift();
+                console.log(next);
+                this.buildStep(next.component, next.node, next.data);
+            },
+            endOfLine()
+            {
+                console.log('end of the line');
+
+                for(let i = this.progress.length - 1; i >= 0; i--)
                 {
-                    let parentNode = this.nodes.find(node => node.id === parentId);
-                    parentNode.hasChildren = true;
+                    if(this.progress[i].nextStep && this.progress[i].nextStep.length)
+                    {
+                        let next = this.progress[i].nextStep.shift();
+                        console.log(next);
+                        this.buildStep(next.component, next.node, next.data);
+                        break;
+                    }
+
+                    if(i === 0)
+                    {
+                        this.buildStep('buildNodes', {}, this.progress);
+                    }
                 }
-            },
-            /**
-             * Set the active node of the current step
-             */
-            setActiveNode(node)
-            {
-                this.activeNode = node;
-            },
-            nextStep(next, updateStep = true)
-            {
-                if(updateStep)
-                {
-                    this.step++;
-                }
-                this.wizComponent = next
-            },
-            nextNode(next)
-            {
-                let newActive = next[0];
-
-                for(let n of next)
-                {
-                    this.createNode(this.activeNode.id, n.nodeType, n.data);
-
-                }
-
-                this.activeNode = newActive;
-                this.step++;
-                this.wizComponent = newActive.nodeType;
-            },
-            /**
-             * Build nodes for each of the one key options
-             */
-            buildGreetOptions(data)
-            {
-                // console.log(data);
-
-                this.wizComponent = 'dialOption';
             }
         },
     }
 </script>
-
-<style>
-    #wizard-wrapper {
-        color: #000000;
-        height: calc(100vh - 75px);
-        overflow: auto;
-    }
-
-    .swipe-enter-active,
-    .swipe-leave-active {
-        transition: all 0.5s ease-out;
-    }
-
-    .swipe-enter-from {
-        opacity: 0;
-        transform: translateX(100px);
-    }
-
-    .swipe-leave-to {
-        opacity: 0;
-        transform: translateX(-100px);
-    }
-</style>

@@ -21,8 +21,9 @@
                     <b-button size="sm" pill class="float-right" variant="info" @click="form.number.push('')"><i class="fas fa-plus d-none d-sm-inline" aria-hidden="true"></i> Add</b-button>
                 </div>
                 <div class="text-center">
+                    <b-button pill variant="info" @click="back" v-if="showBack">Back</b-button>
                     <b-button pill variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button pill variant="danger"  type="reset" @click="reset">Reset</b-button>
+                    <b-button pill variant="danger"  type="reset" @click="reset" v-if="!hideReset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -44,6 +45,16 @@
                 required: false,
                 default: 'save',
             },
+            hideReset: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
+            showBack: {
+                type: Boolean,
+                required: false,
+                default: false,
+            }
         },
         data() {
             return {
@@ -69,6 +80,10 @@
             reset()
             {
                 this.form.number = [...this.lineList];
+            },
+            back()
+            {
+                this.$emit('back');
             }
         },
     }

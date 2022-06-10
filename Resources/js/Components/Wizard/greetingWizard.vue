@@ -2,7 +2,7 @@
     <div>
         <div class="row justify-content-center grid-margin">
             <div class="col-md-6 text-center">
-                <h3 class="text-center text-dark">{{node.data.headerText}}</h3>
+                <h3 class="text-center text-dark">{{activeStep.node.data.headerText}}</h3>
                 <p>
                     Now lets determine what the Auto Attendant Greeting should say.  Please enter the script
                     for the greeting below.  It should include all instructions that a caller will need in order
@@ -21,10 +21,13 @@
         <div class="row justify-content-center grid-margin">
             <div class="col-md-6">
                 <greeting-form
-                    :greetingTitle="node.data.headerText"
-                    :greeting="node.data.greeting"
+                    :greetingTitle="activeStep.node.data.headerText"
+                    :greeting="activeStep.node.data.greeting"
                     saveText="Next"
+                    showBack
+                    hideReset
                     @save="save"
+                    @back="back"
                 ></greeting-form>
             </div>
         </div>
@@ -32,24 +35,55 @@
 </template>
 
 <script>
-    import greetingForm from '../Forms/greetingForm.vue'
+    import GreetingForm from '../Forms/greetingForm.vue'
 
     export default {
-        components: { greetingForm },
+        components: { GreetingForm },
         props: {
-            node: {
+            activeStep: {
                 type: Object,
                 required: true,
             }
         },
+        data() {
+            return {
+                //
+            }
+        },
+        created() {
+            //
+        },
+        mounted() {
+            //
+        },
+        computed: {
+            //
+        },
+        watch: {
+            //
+        },
         methods: {
             save(data)
             {
-                this.node.valid         = true;
-                this.node.data.greeting = data.greeting;
+                this.activeStep.node.data.greeting = data.greeting;
 
-                this.$emit('nextStep', 'dialOption', false);
+                let nextStep = [
+                    {
+                        component: 'dial-options-wizard',
+                        data     : {
+                            greeting: data.greeting,
+                            parentId: this.activeStep.node.id,
+                        },
+                    }
+                ];
+
+                this.$emit('nextStep', nextStep);
             },
+            back()
+            {
+                console.log('back');
+                alert('go back....');
+            }
         },
     }
 </script>

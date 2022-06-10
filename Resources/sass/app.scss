@@ -1,3 +1,47 @@
+#home-wrapper {
+    color: #000000;
+    height: calc(100vh - 75px);
+    overflow: auto;
+}
+
+#builder-wrapper {
+    color: #000000;
+    min-height: calc(100vh - 75px);
+    overflow: auto;
+}
+
+#flow-wrapper {
+    height: 80%;
+    overflow: scroll;
+    background-size: 20px 20px;
+    background-image:
+        linear-gradient(to right, rgba(231, 228, 228, 0.719) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(231, 228, 228, 0.719) 1px, transparent 1px);
+}
+
+#action-wrapper {
+    height: 10%;
+}
+
+.flowy-block {
+    max-width: 250px;
+}
+
 .active-node {
     border: 2px solid red !important;
+}
+
+.swipe-enter-active,
+.swipe-leave-active {
+    transition: all 0.5s ease-out;
+}
+
+.swipe-enter-from {
+    opacity: 0;
+    transform: translateX(100px);
+}
+
+.swipe-leave-to {
+    opacity: 0;
+    transform: translateX(-100px);
 }
