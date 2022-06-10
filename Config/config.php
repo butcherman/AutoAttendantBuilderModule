@@ -5,12 +5,13 @@ return [
     *   Basic Module Information - Name and Version
     */
     'name' => 'AutoAttendantBuilderModule',
-    'ver'  => '0.0.0-dev',
+    'ver'  => '0.0.0-beta',
 
     /**
      * If non-registered users are allowed to use this tool or not
      */
-    'allow_public_access' => false,
+    // 'allow_public_access' => false,
+    'allow_public_access' => true,
 
     /**
      * How long to save AA builds in the database for in days
@@ -31,11 +32,11 @@ return [
      * If you would rather have a button link on the Dashboard page, use this section
      */
    'dashboard_tool' => [
-       [
-           'name'  => 'Auto Attendant Builder',
-           'icon'  => 'fas fa-headset',
-           'route' => 'AutoAttendantBuilderModule.index',
-       ],
+    //    [
+    //        'name'  => 'Auto Attendant Builder',
+    //        'icon'  => 'fas fa-headset',
+    //        'route' => 'AutoAttendantBuilderModule.index',
+    //    ],
    ],
 
     /*
