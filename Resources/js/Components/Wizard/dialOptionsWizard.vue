@@ -2,6 +2,7 @@
     <div>
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
+                <h3>One Key Options</h3>
                 <p>
                     Now that we know what the greeting should say, we need to determine what happens when
                     callers press the buttons they are told to press.  For each option below, define what
@@ -12,7 +13,7 @@
                     on the line. We need to know what to do with the call in this instance as well.
                 </p>
                 <p>
-                    We have included the options that were in your script, but if you would like to add additional
+                    We have included the options that were found in your script, but if you would like to add additional
                     option, use the Add button to assign them.
                 </p>
             </div>
@@ -23,7 +24,6 @@
                     :dialOptions="dialOptions"
                     saveText="Next"
                     hideReset
-                    showBack
                     @save="save"
                 ></all-dial-options-form>
             </div>
@@ -34,7 +34,7 @@
 <script>
     import allDialOptionsForm from '../Forms/allDialOptionsForm.vue';
     import { findDialOptions } from '../../Modules/greetingMethods';
-import { DefaultGreetingData, NewNode } from '../../Modules/defaultData';
+    import { DefaultGreetingData, NewNode } from '../../Modules/defaultData';
 
     export default {
         components: { allDialOptionsForm },
@@ -54,6 +54,7 @@ import { DefaultGreetingData, NewNode } from '../../Modules/defaultData';
         },
         mounted() {
             //
+            console.log(this.dialOptions);
         },
         computed: {
             //

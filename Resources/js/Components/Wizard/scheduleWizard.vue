@@ -2,22 +2,27 @@
     <div>
         <div class="row justify-content-center grid-margin">
             <div class="col-md-6 text-center">
+                <h3>Business Hours</h3>
                 <p>
-                    Tell us about your business schedule.  Anything in between the hours noted is considered your
-                    On Hours or Open Hours.  All other times are considered your Off Hours, or Closed Hours.
+                    Tell us about your business schedule.  Anything in between the hours you input below are
+                    considered your "On Hours" or Open Hours.  All other times are considered your "Off Hours"
+                    or Closed Hours.
+                </p>
+                <p>
+                    If you are open different hours on different days, you can use the Add button to generate
+                    multiple schedule ranges.
                 </p>
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
                 <schedule-form
                     :headerText="activeStep.node.data.headerText"
                     :schedule="schedule"
                     saveText="Next"
                     hideReset
-                    showBack
+                    hideHeader
                     @save="save"
-                    @back="back"
                 ></schedule-form>
             </div>
         </div>
@@ -25,7 +30,7 @@
 </template>
 
 <script>
-    import ScheduleForm from '../Forms/scheduleForm.vue';
+    import ScheduleForm                     from '../Forms/scheduleForm.vue';
     import { DefaultGreetingData, NewNode } from '../../Modules/defaultData';
 
     export default {
@@ -41,26 +46,15 @@
                 schedule: this.activeStep.node.data.schedule,
             }
         },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
-        },
         methods: {
             save(data)
             {
                 this.activeStep.node.data = data;
 
                 let greetings = ['On Hours Greeting', 'Off Hours Greeting'];
-                let nextStep = [];
+                let nextStep  = [];
 
+                //  Build the On Hours and Off Hours greeting steps
                 for(let g of greetings)
                 {
                     let defaultData = new DefaultGreetingData;
@@ -73,11 +67,6 @@
                 }
                 this.$emit('nextStep', nextStep);
             },
-            back()
-            {
-                console.log('back');
-                alert('go back....');
-            }
         },
     }
 </script>

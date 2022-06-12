@@ -1,88 +1,78 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-12 mt-4">
-                <h2 class="text-center">Auto Attendant Builder</h2>
+        <div class="row justify-content-center">
+            <div class="col">
+                <h4 class="text-center">
+                    Welcome
+                </h4>
             </div>
         </div>
-        <div id="builder-wrapper" class="row justify-content-center p-4">
-            <div class="col h-100">
-                <div class="card h-100">
-                    <div class="card-body h-100">
-                        <div class="card-title text-center">
-                            <inertia-link
-                                v-if="auth"
-                                as="b-button"
-                                size="sm"
-                                variant="info"
-                                :href="route('dashboard')"
-                                pill
-                            >
-                                Return to Tech Bench
-                            </inertia-link>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 clearfix">
-                                <h4 class="text-center text-dark grid-margin">Welcome</h4>
-                                <div class="row justify-content-center grid-margin">
-                                    <div class="col-md-6 text-center">
-                                        <p>
-                                            Welcome to the Auto Attendant Builder. The purpose of this tool is to assist in building a functional Auto Attendant Tree for your business.  Working through the different
-                                            steps we can build a tree that ensures that the tree is user friendly and has all of the information necessary to efficiently route caller to the right people and departments.
-                                        </p>
-                                        <p>
-                                            Select one of the options below to get started.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center grid-margin">
-                                    <div class="col-md-3 text-right">
-                                        <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.wizard')" block variant="info" pill>Start the Wizard</inertia-link>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p>The Auto Attendant Wizard will walk you step by step through building your Auto Attendant Tree</p>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center grid-margin">
-                                    <div class="col-md-3 text-right">
-                                        <b-button block variant="info" pill @click="comingSoon">Load Data File</b-button>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p>If you previously downloaded a data file from this site you can upload it to continue working on your Auto Attendant Tree</p>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center grid-margin">
-                                    <div class="col-md-3 text-right">
-                                        <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.create')" block variant="info" pill>I know what I'm doing, let me at it</inertia-link>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p>No Wizard, no fluff.  Get right to building your Auto Attendant Tree</p>
-                                    </div>
-                                </div>
-                                <div class="row justify-content-center grid-margin">
-                                    <div class="col-md-3 text-right">
-                                        <b-button block variant="info" pill @click="comingSoon">Tips and Tricks</b-button>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p>Here are some tips to make your Auto Attendant user friendly</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <p>
+                     Welcome to the Auto Attendant Builder. The purpose of this tool is to assist in building
+                     a functional Auto Attendant Tree for your business.  Working through the different steps
+                     we can build a menu tree that ensures that it is user friendly and has all of the information
+                     necessary to efficiently route caller to the correct departments and employees.
+                </p>
+                <p>
+                    Select one of the options below to get started.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-2 pt-2 border-top">
+            <div class="col-md-3 text-right">
+                <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.wizard')" block variant="info">Start the Wizard</inertia-link>
+            </div>
+            <div class="col-md-4 d-none d-md-block">
+                <p>
+                    The Auto Attendant Wizard will walk you through the step by step process of building an Auto Attendant Tree.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-2 pt-2">
+            <div class="col-md-3 text-right">
+                <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.tips')" block variant="info">Tips and Tricks</inertia-link>
+            </div>
+            <div class="col-md-4 d-none d-md-block">
+                <p>
+                   Here are some tips and common questions that will help you build an efficient and user friendly
+                   Auto Attendant.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-2 pt-2">
+            <div class="col-md-3 text-right">
+                <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.loadData')" block variant="info">Load Data File</inertia-link>
+            </div>
+            <div class="col-md-4 d-none d-md-block">
+                <p>
+                    If you have previously downloaded a data file from this tool, you can upload it and continue
+                    to work on it.
+                </p>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-2 pt-2">
+            <div class="col-md-3 text-right">
+                <inertia-link as="b-button" :href="route('AutoAttendantBuilderModule.create')" block variant="info">I know what I'm doing, let me at it</inertia-link>
+            </div>
+            <div class="col-md-4 d-none d-md-block">
+                <p>
+                    No Wizard, no fluff.  Get right to building your Auto Attendant Tree
+                </p>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import guest from '../../../../../resources/js/Layouts/guest';
+    import Layout from '../Template/Layout.vue';
+
     export default {
+        layout: [ guest, Layout ],
         props: {
-            auth: {
-                type: Boolean,
-                default: false,
-            }
+            //
         },
         data() {
             return {
@@ -102,10 +92,7 @@
             //
         },
         methods: {
-            comingSoon()
-            {
-                alert('Feature coming soon...');
-            }
+            //
         },
     }
 </script>
