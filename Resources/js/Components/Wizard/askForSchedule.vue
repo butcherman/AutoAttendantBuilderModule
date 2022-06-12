@@ -2,18 +2,13 @@
     <div>
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
+                <h3>Do you want multiple greetings?</h3>
                 <p>
                     Do you want a single greeting to play 24/7 or should there be different greetings
                     for when you are open and when you are closed?
                 </p>
-
-                <b-button variant="info" pill @click="choose('greeting')">One Greeting 24/7</b-button>
-                <b-button variant="info" pill @click="choose('schedule')">Open and Closed Greetings</b-button>
-            </div>
-        </div>
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-6 text-center">
-                <b-button variant="info" pill @click="back">Back</b-button>
+                <b-button class="w-50 m-2" variant="info" @click="choose('greeting')">One Greeting 24/7</b-button>
+                <b-button class="w-50 m-2" variant="info" @click="choose('schedule')">Open and Closed Greetings</b-button>
             </div>
         </div>
     </div>
@@ -29,53 +24,29 @@
                 required: true,
             }
         },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
-        },
         methods: {
             choose(choice)
             {
                 let nextStep = [];
+                let defaultData;
 
                 if(choice === 'greeting')
                 {
-                    let defaultData = new DefaultGreetingData;
+                    defaultData            = new DefaultGreetingData;
                     defaultData.headerText = '24/7 Greeting';
-
-                    nextStep.push({
-                        component: 'greeting-wizard',
-                        node: new NewNode(0, 'greeting', defaultData),
-                    });
                 }
                 else if(choice === 'schedule')
                 {
-                    nextStep.push({
-                        component: 'schedule-wizard',
-                        node: new NewNode(0, 'schedule', new DefaultScheduleData),
-                    });
+                    defaultData = new DefaultScheduleData;
                 }
+
+                nextStep.push({
+                    component: `${choice}-wizard`,
+                    node     : new NewNode(0, choice, defaultData),
+                });
 
                 this.$emit('nextStep', nextStep);
             },
-            back()
-            {
-                console.log('back');
-                alert('go back....');
-            }
         },
     }
 </script>

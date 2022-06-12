@@ -2,11 +2,11 @@
     <div>
         <div class="row justify-content-center grid-margin">
             <div class="col-md-6 text-center">
-                <h3 class="text-center text-dark">{{activeStep.node.data.headerText}}</h3>
+                <h3>{{activeStep.node.data.headerText}}</h3>
                 <p>
-                    Now lets determine what the Auto Attendant Greeting should say.  Please enter the script
-                    for the greeting below.  It should include all instructions that a caller will need in order
-                    to have their call routed properly.
+                    Now lets determine what the Auto Attendant {{activeStep.node.data.headerText}} should say.
+                    Please enter the script for the greeting below.  It should include all instructions that a
+                    caller will need in order to have their call routed properly.
                 </p>
                 <p>
                     For example, if you wish to have a way for the callers to reach the Sales department, include
@@ -24,10 +24,8 @@
                     :greetingTitle="activeStep.node.data.headerText"
                     :greeting="activeStep.node.data.greeting"
                     saveText="Next"
-                    showBack
                     hideReset
                     @save="save"
-                    @back="back"
                 ></greeting-form>
             </div>
         </div>
@@ -44,23 +42,6 @@
                 type: Object,
                 required: true,
             }
-        },
-        data() {
-            return {
-                //
-            }
-        },
-        created() {
-            //
-        },
-        mounted() {
-            //
-        },
-        computed: {
-            //
-        },
-        watch: {
-            //
         },
         methods: {
             save(data)
@@ -79,11 +60,6 @@
 
                 this.$emit('nextStep', nextStep);
             },
-            back()
-            {
-                console.log('back');
-                alert('go back....');
-            }
         },
     }
 </script>

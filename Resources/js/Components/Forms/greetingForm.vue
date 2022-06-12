@@ -13,13 +13,14 @@
             <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
                 <text-editor v-model="form.greeting" placeholder="Enter Greeting" label="Greeting Script" rules="required"></text-editor>
                 <div class="text-center">
-                    <b-button pill variant="info" @click="back" v-if="showBack">Back</b-button>
-                    <b-button pill variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button pill variant="danger" @click="reset" v-if="!hideReset">Reset</b-button>
-                    <b-button pill variant="info" @click="enterSample">Sample Greeting</b-button>
+                    <b-button class="w-25" variant="success" type="submit">{{saveText}}</b-button>
+                    <b-button class="w-25" variant="danger" type="reset" @click="reset" v-if="!hideReset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
+        <div class="text-center m-4">
+            <b-button class="w-50" variant="info" @click="enterSample">Create Sample Greeting</b-button>
+        </div>
     </div>
 </template>
 
@@ -44,11 +45,6 @@
                 required: false,
                 default: false,
             },
-            showBack: {
-                type: Boolean,
-                required: false,
-                default: false,
-            }
         },
         data() {
             return {
@@ -65,10 +61,6 @@
             reset()
             {
                 this.form.greeting = this.greeting;
-            },
-            back()
-            {
-                this.$emit('back');
             },
             enterSample()
             {

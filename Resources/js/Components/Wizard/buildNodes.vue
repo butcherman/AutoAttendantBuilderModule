@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-center text-dark">All Done</h1>
+        <h1 class="text-center text-dark">Almost Done!</h1>
         <p class="text-center">
             Please wait while I go through this information and build your Auto Attendant Tree.
         </p>
@@ -22,8 +22,7 @@
         },
         data() {
             return {
-                //
-                nodeId: 100,
+                nodeId: 100,        //  TODO - fix this to be proper
             }
         },
         created() {
@@ -103,7 +102,6 @@
 
             this.$inertia.post(route('AutoAttendantBuilderModule.store'), flowNodes);
 
-            //  TODO - build one key option nodes
         },
         computed: {
             //

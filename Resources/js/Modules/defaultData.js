@@ -10,6 +10,12 @@ export function NewNode(parentId, nodeComponent, data)
     this.hasChildren   = false;
 }
 
+export function DefaultIncomingLineData()
+{
+    this.headerText = 'Start Here';
+    this.lineList   = ['', '', ''];
+}
+
 export function DefaultScheduleData()
 {
     this.headerText = 'Business Hours';

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h4 class="text-center text-dark">
+        <h4 v-if="!hideHeader" class="text-center text-dark">
             Schedules
             <i class="far fa-question-circle pointer" title="Help" v-b-tooltip.hover v-b-modal.help-modal></i>
         </h4>
@@ -24,7 +24,7 @@
                             <i v-if="key !== 0" class="fas fa-trash-alt pointer text-danger" title="Remove Entry" v-b-tooltip.hover @click="removeRow(key)"></i>
                         </div>
                         <div class="col-md-5">
-                            <ValidationProvider v-slot="v" :rules="key == 0 ? 'required' : null" name="start_time">
+                            <ValidationProvider v-slot="v" :rules="`${key == 0 ? 'required' : ''}`" name="start_time">
                                 <b-form-group label="Start Time:" label-for="start_time">
                                     <b-form-timepicker v-model="sch.start_time" locale="en"></b-form-timepicker>
                                     <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
@@ -32,7 +32,7 @@
                             </ValidationProvider>
                         </div>
                         <div class="col-md-5">
-                            <ValidationProvider v-slot="v" rules="after-start:@start_time" name="stop_time">
+                            <ValidationProvider v-slot="v" :rules="`${sch.start_time !== null ? 'required' : ''}|after-start:@start_time`" name="stop_time">
                                 <b-form-group label="Stop Time:" label-for="stop_time">
                                     <b-form-timepicker v-model="sch.stop_time" locale="en"></b-form-timepicker>
                                     <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
@@ -40,10 +40,11 @@
                             </ValidationProvider>
                         </div>
                         <div class="col">
-                            <ValidationProvider v-slot="v" :rules="key == 0 || sch.start_time !== null ? 'required' : null">
+                            <ValidationProvider v-slot="v" :rules="`${key === 0 || sch.start_time !== null ? 'required' : ''}`">
                                 <b-form-checkbox-group
                                     v-model="sch.days"
                                     :options="days"
+                                    class="text-center"
                                     name="days"
                                 ></b-form-checkbox-group>
                                 <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
@@ -55,9 +56,8 @@
                     </div>
                 </fieldset>
                 <div class="text-center">
-                    <b-button pill variant="info" @click="back" v-if="showBack">Back</b-button>
-                    <b-button pill variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button v-if="!hideReset" pill variant="danger" @click="reset">Reset</b-button>
+                    <b-button class="w-25" variant="success" type="submit">{{saveText}}</b-button>
+                    <b-button class="w-25" v-if="!hideReset" variant="danger" @click="reset">Reset</b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -87,7 +87,7 @@
                 required: false,
                 default: false,
             },
-            showBack: {
+            hideHeader: {
                 type: Boolean,
                 required: false,
                 default: false,
@@ -149,6 +149,14 @@
             },
             save()
             {
+                //  Remove any blank rows
+                this.form.schedule.forEach((elem, index) => {
+                    if(elem.start_time === null)
+                    {
+                        this.removeRow(index);
+                    }
+                })
+
                 this.$emit('save', this.form);
             },
             reset()
@@ -161,17 +169,13 @@
                 this.schedule.forEach(elem => {
                     let newObj = {
                         start_time: elem.start_time,
-                        stop_time: elem.stop_time,
-                        days: [...elem.days],
+                        stop_time : elem.stop_time,
+                        days      : [...elem.days],
                     };
 
                     this.form.schedule.push(newObj);
                 });
             },
-            back()
-            {
-                this.$emit('back');
-            }
         },
     }
 </script>

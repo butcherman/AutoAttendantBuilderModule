@@ -1,51 +1,30 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-12 mt-4">
-                <h2 class="text-center">Auto Attendant Builder</h2>
-            </div>
-        </div>
-        <div id="builder-wrapper" class="row justify-content-center p-4">
-            <div class="col h-100">
-                <div class="card h-100">
-                    <div class="card-body h-100">
-                        <div class="card-title text-center">
-                            <inertia-link
-                                v-if="auth"
-                                as="b-button"
-                                size="sm"
-                                variant="info"
-                                :href="route('dashboard')"
-                                pill
-                            >
-                                Return to Tech Bench
-                            </inertia-link>
-                        </div>
-                        <div class="row h-100">
-                            <div class="col-12 h-100 overflow-scroll">
-                                <Transition name="swipe" mode="out-in">
-                                    <component
-                                        :is="wizComponent"
-                                        :activeStep="activeStep"
-                                        @nextStep="nextStep"
-                                        @endOfLine="endOfLine"
-                                    ></component>
-                                </Transition>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="row h-100">
+            <div class="col-12 h-100 overflow-scroll">
+                <Transition name="swipe" mode="out-in">
+                    <component
+                        :is="wizComponent"
+                        :activeStep="activeStep"
+                        @nextStep="nextStep"
+                        @endOfLine="endOfLine"
+                    ></component>
+                </Transition>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import guest from '../../../../../resources/js/Layouts/guest';
+    import Layout from '../Template/Layout.vue';
+
     import Vue         from 'vue';
     import upperFirst  from 'lodash/upperFirst';
     import camelCase   from 'lodash/camelCase';
 
-    import { NewNode } from '../Modules/defaultData';
+    //  Module Functions
+    import { NewNode, DefaultIncomingLineData } from '../Modules/defaultData';
 
     /**
      * Register all wizard components
@@ -59,11 +38,9 @@
     });
 
     export default {
+        layout: [ guest, Layout ],
         props: {
-            auth: {
-                type: Boolean,
-                default: false,
-            }
+            //
         },
         data() {
             return {
@@ -75,11 +52,9 @@
             }
         },
         created() {
-            //
+            this.buildStep('incoming-lines-wizard', new NewNode(-1, 'incoming-lines', new DefaultIncomingLineData));
         },
         mounted() {
-            //
-            this.buildStep('incoming-lines-wizard', new NewNode(-1, 'incoming-lines', {}));
         },
         computed: {
             //
@@ -88,8 +63,12 @@
             //
         },
         methods: {
+            /**
+             * Build the Step Prop for the next step
+             */
             buildStep(component, node, data)
             {
+                //  If there is a node included in the step, we must assign it an ID
                 if(node)
                 {
                     node.id = this.nodeId++;
@@ -103,20 +82,25 @@
                 }
 
                 this.progress.push(newStep);
-                this.setActiveStep(newStep);
+                this.activeStep   = newStep;
                 this.wizComponent = component;
             },
-            setActiveStep(node)
-            {
-                this.activeStep = node;
-            },
+            /**
+             * Get the next step information from the current finished step and use that
+             * to build the next step
+             */
             nextStep(data)
             {
                 this.activeStep.nextStep = data;
 
+                //  Steps may fork into multiple steps.  Use array to manage them
                 let next = data.shift();
                 this.buildStep(next.component, next.node, next.data);
             },
+            /**
+             * The end of the Wizard for this line of steps has been reached
+             * Check other steps to see if there are any remaining next steps
+             */
             endOfLine()
             {
                 for(let i = this.progress.length - 1; i >= 0; i--)
@@ -128,6 +112,7 @@
                         break;
                     }
 
+                    //  No steps left, build the AA Tree Nodes
                     if(i === 0)
                     {
                         this.buildStep('buildNodes', {}, this.progress);
