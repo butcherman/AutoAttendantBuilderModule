@@ -2,62 +2,136 @@
     <div>
         <h4 v-if="!hideHeader" class="text-center text-dark">
             Schedules
-            <i class="far fa-question-circle pointer" title="Help" v-b-tooltip.hover v-b-modal.help-modal></i>
+            <i
+                class="far fa-question-circle pointer"
+                title="Help"
+                v-b-tooltip.hover
+                v-b-modal.help-modal
+            />
         </h4>
         <b-modal id="help-modal" title="Help" ok-only>
             <p>
-                If you wish to play separate greetings for when you are open vs. when you are closed, please fill
-                out the schedule information below
+                If you wish to play separate greetings for when you are open vs.
+                when you are closed, please fill out the schedule information below.
             </p>
             <p>
-                Any time frame referenced below will be conisdered "On Hours" or Open Hours.  All other times not
-                referenced will be considered "Off Hours" or Closed Hours
+                Any time frame referenced below will be conisdered "On Hours"
+                or Open Hours.  All other times not referenced will be considered
+                "Off Hours" or Closed Hours.
             </p>
         </b-modal>
         <ValidationObserver v-slot="{handleSubmit}">
-            <b-form @submit.prevent="handleSubmit(save)" novalidate>
-                <text-input v-model="form.headerText" rules="required" label="Schedule Name" name="title"></text-input>
+            <b-form
+                novalidate
+                @submit.prevent="handleSubmit(save)"
+                @reset.prevent="reset"
+            >
+                <text-input
+                    v-model="form.headerText"
+                    rules="required"
+                    label="Schedule Name"
+                    name="title"
+                />
                 <fieldset>
                     <label>Schedule Details</label>
-                    <div class="row my-4 border-top" v-for="(sch, key) in form.schedule" :key="key">
+                    <div
+                        class="row my-4 border-top"
+                        v-for="(sch, key) in form.schedule"
+                        :key="key"
+                    >
                         <div class="col-md-1">
-                            <i v-if="key !== 0" class="fas fa-trash-alt pointer text-danger" title="Remove Entry" v-b-tooltip.hover @click="removeRow(key)"></i>
+                            <i
+                                v-if="key !== 0"
+                                class="fas fa-trash-alt pointer text-danger"
+                                title="Remove Entry"
+                                v-b-tooltip.hover
+                                @click="removeRow(key)"
+                            />
                         </div>
                         <div class="col-md-5">
-                            <ValidationProvider v-slot="v" :rules="`${key == 0 ? 'required' : ''}`" name="start_time">
-                                <b-form-group label="Start Time:" label-for="start_time">
-                                    <b-form-timepicker v-model="sch.start_time" locale="en"></b-form-timepicker>
-                                    <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
+                            <ValidationProvider
+                                v-slot="v"
+                                :rules="`${key == 0 ? 'required' : ''}`"
+                                name="start_time"
+                            >
+                                <b-form-group
+                                    label="Start Time:"
+                                    label-for="start_time"
+                                >
+                                    <b-form-timepicker
+                                        v-model="sch.start_time"
+                                        locale="en"
+                                    />
+                                    <b-form-invalid-feedback :state="false">
+                                        {{v.errors[0]}}
+                                    </b-form-invalid-feedback>
                                 </b-form-group>
                             </ValidationProvider>
                         </div>
                         <div class="col-md-5">
-                            <ValidationProvider v-slot="v" :rules="`${sch.start_time !== null ? 'required' : ''}|after-start:@start_time`" name="stop_time">
-                                <b-form-group label="Stop Time:" label-for="stop_time">
-                                    <b-form-timepicker v-model="sch.stop_time" locale="en"></b-form-timepicker>
-                                    <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
+                            <ValidationProvider
+                                v-slot="v"
+                                :rules="`${sch.start_time !== null ? 'required' : ''}|after-start:@start_time`"
+                                name="stop_time"
+                            >
+                                <b-form-group
+                                    label="Stop Time:"
+                                    label-for="stop_time"
+                                >
+                                    <b-form-timepicker
+                                        v-model="sch.stop_time"
+                                        locale="en"
+                                    />
+                                    <b-form-invalid-feedback :state="false">
+                                        {{v.errors[0]}}
+                                    </b-form-invalid-feedback>
                                 </b-form-group>
                             </ValidationProvider>
                         </div>
                         <div class="col">
-                            <ValidationProvider v-slot="v" :rules="`${key === 0 || sch.start_time !== null ? 'required' : ''}`">
+                            <ValidationProvider
+                                v-slot="v"
+                                :rules="`${key === 0 || sch.start_time !== null ? 'required' : ''}`"
+                            >
                                 <b-form-checkbox-group
                                     v-model="sch.days"
                                     :options="days"
                                     class="text-center"
                                     name="days"
                                 ></b-form-checkbox-group>
-                                <b-form-invalid-feedback :state="false">{{v.errors[0]}}</b-form-invalid-feedback>
+                                <b-form-invalid-feedback :state="false">
+                                    {{v.errors[0]}}
+                                </b-form-invalid-feedback>
                             </ValidationProvider>
                         </div>
                     </div>
                     <div class="clearfix">
-                        <b-button size="sm" pill class="float-right" variant="info" @click="addRow"><i class="fas fa-plus d-none d-sm-inline" aria-hidden="true"></i> Add</b-button>
+                        <b-button
+                            size="sm"
+                            pill
+                            class="float-right"
+                            variant="info"
+                            @click="addRow"
+                        >
+                            <i class="fas fa-plus d-none d-sm-inline" /> Add
+                        </b-button>
                     </div>
                 </fieldset>
                 <div class="text-center">
-                    <b-button class="w-25" variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button class="w-25" v-if="!hideReset" variant="danger" @click="reset">Reset</b-button>
+                    <b-button
+                        class="w-25"
+                        variant="success"
+                        type="submit"
+                    >
+                        {{saveText}}
+                    </b-button>
+                    <b-button
+                        class="w-25"
+                        variant="danger"
+                        type="reset"
+                    >
+                        Reset
+                    </b-button>
                 </div>
             </b-form>
         </ValidationObserver>
@@ -70,26 +144,19 @@
     export default {
         props: {
             headerText: {
-                type: String,
+                type    : String,
                 required: true,
             },
             schedule: {
-                type: Array,
+                type    : Array,
                 required: true,
             },
             saveText: {
-                type: String,
-                required: false,
+                type   : String,
                 default: 'Save',
             },
-            hideReset: {
-                type: Boolean,
-                required: false,
-                default: false,
-            },
             hideHeader: {
-                type: Boolean,
-                required: false,
+                type   : Boolean,
                 default: false,
             }
         },

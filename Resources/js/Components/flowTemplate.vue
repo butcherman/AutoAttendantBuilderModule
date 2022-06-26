@@ -1,14 +1,15 @@
 <template>
     <b-card
-        :header-bg-variant="node.valid ? 'success' : 'warning'"
-        bg-variant="light"
+        :no-body="hideSlot"
         :header="node.data.headerText"
+        :class="node.active ? 'active-node' : ''"
+        :header-bg-variant="node.valid ? 'success' : 'warning'"
         align="center"
         class="pointer"
-        :class="node.active ? 'active-node' : ''"
+        bg-variant="light"
         @click="emitClick"
     >
-        <b-card-text>
+        <b-card-text v-if="!hideSlot">
             <slot />
         </b-card-text>
     </b-card>
@@ -20,6 +21,10 @@
             node: {
                 type: Object,
                 required: true,
+            },
+            hideSlot: {
+                type: Boolean,
+                default: false,
             }
         },
         methods: {

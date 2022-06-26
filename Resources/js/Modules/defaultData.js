@@ -13,7 +13,7 @@ export function NewNode(parentId, nodeComponent, data)
 export function DefaultIncomingLineData()
 {
     this.headerText = 'Start Here';
-    this.lineList   = ['', '', ''];
+    this.lineList   = [''];
 }
 
 export function DefaultScheduleData()
@@ -33,4 +33,14 @@ export function DefaultGreetingData()
     this.headerText       = '24/7 Greeting';
     this.greeting         = '';
     this.availableOptions = [0,1,2,3,4,5,6,7,8,9,11];
+}
+
+export function DefaultOptionData()
+{
+    this.headerText       = '';
+    this.num              = '?';
+    this.verbage          = 'Press';
+    this.whatHappens      = null;
+    this.targetExtension  = [];
+    this.availableOptions = [];
 }

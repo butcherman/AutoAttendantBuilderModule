@@ -1,57 +1,67 @@
 <template>
-    <div>
-        <div class="row">
-            <div class="col-12 mt-4">
-                <h2 class="text-center">Auto Attendant Builder</h2>
+    <div id="flow-body">
+        <div id="flow-wrapper" class="row">
+            <div class="col-12 border clearfix">
+                <flowy ref="flowyChart" :nodes="flowStore.nodes"></flowy>
             </div>
         </div>
-        <div id="builder-wrapper" class="row justify-content-center p-4">
-            <div class="col h-100">
-                <div class="card h-100">
-                    <div class="card-body h-100">
-                        <div class="card-title text-center">
-                            <inertia-link
-                                v-if="auth"
-                                as="b-button"
-                                size="sm"
-                                variant="info"
-                                :href="route('dashboard')"
-                                pill
-                            >
-                                Return to Tech Bench
-                            </inertia-link>
-                            <b-button pill variant="info" size="sm" @click="saveTree">Save</b-button>
-                            <b-button pill variant="info" size="sm" @click="downloadTree">Download</b-button>
-                            <b-button pill variant="danger" size="sm" @click="startOver">Start Over</b-button>
-                        </div>
-                        <div id="flow-wrapper" class="row">
-                            <div class="col-12 border clearfix">
-                                <flowy ref="flowyChart" :nodes="nodes"></flowy>
-                            </div>
-                        </div>
-                        <div id="action-wrapper" class="row">
-                            <div class="col-12 border p-2">
-                                <component
-                                    :is="activeNode.nodeComponent+'-action'"
-                                    :node="activeNode"
-                                    @giveBirth="giveBirth"
-                                    @deleteMe="deleteActiveNode"
-                                    @removeChildren="removeChildren"
-                                ></component>
-                            </div>
-                        </div>
-                    </div>
+        <div id="action-wrapper" class="row">
+            <div class="col-12 border p-2">
+                <div class="float-left">
+                    <b-button
+                        size="sm"
+                        title="Save"
+                        variant="primary"
+                        pill
+                        v-b-tooltip.hover
+                        @click="saveCallTree"
+                    >
+                        <i class="fas fa-save" />
+                    </b-button>
+                     <b-button
+                        size="sm"
+                        title="Download"
+                        variant="primary"
+                        pill
+                        v-b-tooltip.hover
+                        @click="download"
+                    >
+                        <i class="fas fa-download" />
+                    </b-button>
+                     <b-button
+                        size="sm"
+                        title="Start Over"
+                        variant="primary"
+                        pill
+                        v-b-tooltip.hover
+                        @click="reset"
+                    >
+                        <i class="fas fa-retweet" />
+                    </b-button>
                 </div>
+                <component
+                    :is="`${activeNode.nodeComponent}-action`"
+                    :node="activeNode"
+                    @delete_me="deleteNode"
+                ></component>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import guest from '../../../../../resources/js/Layouts/guest';
+    import Layout from '../Template/Layout.vue';
+
+    import { useFlowStore }            from '../Stores/flowStore';
+    import { mapStores }               from 'pinia';
+    import { DefaultIncomingLineData } from '../Modules/defaultData';
+
     import Vue         from 'vue';
     import FlowyPlugin from "@hipsjs/flowy-vue";
     import upperFirst  from 'lodash/upperFirst';
     import camelCase   from 'lodash/camelCase';
+
     import "@hipsjs/flowy-vue/dist/lib/flowy-vue.css";
 
     Vue.use(FlowyPlugin);
@@ -59,39 +69,43 @@
     /**
      * Register all flow chart and Form Data components
      */
-    const requireComponent = require.context('../Components', true, /(FlowChart|Actions)\/[A-Za-z-0-9]\w+\.vue$/);
+    const requireComponent = require.context(
+        '../Components',
+        true,
+        /(FlowChart|Actions)\/[A-Za-z-0-9]\w+\.vue$/
+    );
+
     requireComponent.keys().forEach(fileName => {
         const componentConfig = requireComponent(fileName);
-        const componentName   = upperFirst(camelCase(fileName.split('/').pop().replace(/\.\w+$/, '')));
+        const componentName   = upperFirst(camelCase(fileName.split('/')
+                                                        .pop()
+                                                        .replace(/\.\w+$/, '')));
 
         Vue.component( componentName, componentConfig.default || componentConfig);
     });
 
     export default {
+        layout: [ guest, Layout ],
         props: {
-            auth: {
-                type: Boolean,
-                default: false,
+            node_data: {
+                type    : Array,
+                required: false,
+            },
+            aa_link: {
+                type   : String,
+                default: null,
             }
         },
         data() {
             return {
-                idIndex: 0,
                 activeNode: {},
-                nodes: [],
             }
         },
         created() {
             //
         },
         mounted() {
-            /**
-             * Create the initial node
-             */
-            this.createNode(-1, 'incoming-lines', {
-                headerText: 'Start Here',
-                lineList: [''],
-            });
+            this.initialize();
             /**
              * Capture a node click event to make it active
              */
@@ -100,35 +114,27 @@
             });
         },
         computed: {
-            //
+            ...mapStores(useFlowStore),
         },
         watch: {
             //
         },
         methods: {
-            /**
-             * Create a new Flow Chart Node
-             */
-            createNode(parentId, nodeComponent, data)
+            initialize()
             {
-                this.nodes.push({
-                    id: this.idIndex++,
-                    parentId,
-                    nodeComponent,
-                    data,
-                    valid      : false,
-                    active     : false,
-                    hasChildren: false,
-                });
-
-                this.activeNode.hasChildren = true;
-            },
-            /**
-             * Gather the data for new child node and create it
-             */
-            giveBirth(data)
-            {
-                this.createNode(this.activeNode.id, data.component, data.data);
+                if(this.node_data)
+                {
+                    this.flowStore.nodes = this.node_data;
+                }
+                else
+                {
+                    this.flowStore.nodes = [];
+                    this.flowStore.buildNode(
+                        -1,
+                        'incoming-lines',
+                        new DefaultIncomingLineData
+                    );
+                }
             },
             /**
              * Set the active node and remove active from all other
@@ -136,146 +142,87 @@
             setActiveNode(node)
             {
                 this.activeNode.active = false;
-                this.activeNode = node;
+                this.activeNode        = node;
                 this.activeNode.active = true;
             },
-            /**
-             * Process for removing the selected (active) node and its children
-             */
-            deleteActiveNode()
+            deleteNode()
             {
-                this.$bvModal.msgBoxConfirm('Everything attached below this component will also be deleted.', {
-                    title: 'Are You Sure?',
-                    size: 'sm',
-                    buttonSize: 'sm',
-                    okVariant: 'danger',
-                    okTitle: 'YES',
-                    cancelTitle: 'NO',
-                    footerClass: 'p-2',
+                this.$bvModal.msgBoxConfirm('Everything below this point will also be destroyed',
+                {
+                    title          : 'Are you sure?',
+                    size           : 'sm',
+                    buttonSize     : 'sm',
+                    okVariant      : 'danger',
+                    okTitle        : 'YES',
+                    cancelTitle    : 'NO',
+                    footerClass    : 'p-2',
                     hideHeaderClose: false,
-                    centered: true
-                })
-                .then(value => {
+                    centered       : true
+                }).then(value => {
                     if(value)
                     {
-                        let parent = this.nodes.find(ele => { ele.id === parent });
-                        this.removeChildren();
-                        this.deleteNode(this.activeNode);
+                        this.flowStore.destroyNode(this.activeNode);
                         this.activeNode = {};
-                        this.updateChildren();
                     }
                 });
             },
-            /**
-             * Delete all Children nodes for the active node
-             */
-            removeChildren()
+            reset()
             {
-                for(let node of this.nodes)
+                this.$bvModal.msgBoxConfirm('All progress will be lost',
                 {
-                    if(node.parentId == this.activeNode.id)
-                    {
-                        this.deleteNode(node);
-                        this.removeChildren();
-                    }
-                }
-            },
-            /**
-             * Delete a node from the tree
-             */
-            deleteNode(node)
-            {
-                this.nodes.splice(this.nodes.indexOf(node), 1);
-            },
-            /**
-             * Check all nodes to see if it has any children
-             */
-            updateChildren()
-            {
-                for(let node of this.nodes)
-                {
-                    let hasChild = false;
-
-                    for(let child of this.nodes)
-                    {
-                        if(child.parentId === node.id)
-                        {
-                            hasChild = true;
-                        }
-                    }
-
-                    node.hasChildren = hasChild;
-                }
-            },
-            /**
-             * Delete the entire tree and start over
-             */
-            startOver()
-            {
-                this.$bvModal.msgBoxConfirm('Everything will be removed.  This cannot be undone.', {
-                    title: 'Are You Sure?',
-                    size: 'sm',
-                    buttonSize: 'sm',
-                    okVariant: 'danger',
-                    okTitle: 'YES',
-                    cancelTitle: 'NO',
-                    footerClass: 'p-2',
+                    title          : 'Are you sure?',
+                    size           : 'sm',
+                    buttonSize     : 'sm',
+                    okVariant      : 'danger',
+                    okTitle        : 'YES',
+                    cancelTitle    : 'NO',
+                    footerClass    : 'p-2',
                     hideHeaderClose: false,
-                    centered: true
-                })
-                .then(value => {
+                    centered       : true
+                }).then(value => {
                     if(value)
                     {
-                        this.idIndex = 0;
-                        this.activeNode = {};
-                        this.nodes = [];
-
-                        this.createNode(-1, 'incoming-lines', {
-                            headerText: 'Start Here',
-                            lineList: [''],
-                        });
+                        this.flowStore.nodes = [];
+                        this.initialize();
                     }
                 });
             },
-            /**
-             * Save the tree in a database entry to be pulled later
-             */
-            saveTree()
+            download()
             {
-                alert('Feature Coming Soon!!');
+                const content = JSON.stringify({
+                    builder_version: this.$page.props.ver,
+                    uuid           : this.aa_link,
+                    node_data      : this.flowStore.nodes,
+                });
+                const data    = document.createElement('a');
+                const file    = new Blob([content], { type: 'text/plain' });
+
+                data.href     = URL.createObjectURL(file);
+                data.download = 'CallFlow.json';
+                data.click();
             },
-            /**
-             * Download a JSON file containing the tree information
-             */
-            downloadTree()
+            saveCallTree()
             {
-                alert('Feature Coming Soon!!');
+                this.activeNode.active = false;
+                this.activeNode = {};
+
+                let formData = this.$inertia.form({
+                    node_data: this.flowStore.nodes,
+                });
+
+                if(this.aa_link)
+                {
+                    formData.put(route('AutoAttendantBuilderModule.update', this.aa_link), {
+                        onError: (err) => alert(err),
+                    });
+                }
+                else
+                {
+                    formData.post(route('AutoAttendantBuilderModule.store'), {
+                        onError: (err) => alert(err),
+                    });
+                }
             }
         },
     }
 </script>
-
-<style>
-    #builder-wrapper {
-        color: #000000;
-        height: calc(100vh - 75px);
-        overflow: auto;
-    }
-
-    #flow-wrapper {
-        height: 80%;
-        overflow: scroll;
-        background-size: 20px 20px;
-        background-image:
-            linear-gradient(to right, rgba(231, 228, 228, 0.719) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(231, 228, 228, 0.719) 1px, transparent 1px);
-    }
-
-    #action-wrapper {
-        height: 10%;
-    }
-
-    .flowy-block {
-        max-width: 250px;
-    }
-</style>

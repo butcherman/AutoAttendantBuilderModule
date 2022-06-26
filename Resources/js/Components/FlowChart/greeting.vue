@@ -1,14 +1,7 @@
 <template>
-    <b-card
-        :header-bg-variant="node.valid ? 'success' : 'warning'"
-        :header="node.data.headerText"
-        align="center"
-        class="pointer"
-        :class="node.active ? 'active-node' : ''"
-        @click="emitClick"
-    >
-        <b-card-text v-html="node.data.greeting"></b-card-text>
-    </b-card>
+    <flow-template :node="node">
+        <div v-html="node.data.greeting" />
+    </flow-template>
 </template>
 
 <script>
@@ -18,14 +11,8 @@
         components: { FlowTemplate },
         props: {
             node: {
-                type: Object,
+                type    : Object,
                 required: true,
-            }
-        },
-        methods: {
-            emitClick()
-            {
-                this.eventHub.$emit('flow-component-click', this.node);
             }
         },
     }

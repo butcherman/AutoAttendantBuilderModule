@@ -18,8 +18,8 @@ export function findDialOptions(greeting)
     //  The default option that is in every AA Tree is time out
     let dialOptions = [
         {
-            optNum: 11,
-            verbage: 'Time Out',
+            optNum         : 11,
+            verbage        : 'Time Out',
             targetExtension: [],
         }
     ];
@@ -27,12 +27,12 @@ export function findDialOptions(greeting)
     if(foundOpt != null)
     {
         foundOpt.forEach(opt => {
-            let number = opt.match(/\d+/);
+            let number  = opt.match(/\d+/);
             let verbage = opt.match(/(press|dial)/gmi);
 
             dialOptions.push({
-                optNum: Number(number[0]),
-                verbage: upperFirst(verbage),
+                optNum         : Number(number[0]),
+                verbage        : upperFirst(verbage),
                 targetExtension: [],
             });
         });

@@ -1,25 +1,55 @@
 <template>
     <div>
-        <h4 class="text-center text-dark">
+        <h4 v-if="!hideHeader" class="text-center text-dark">
             Enter the {{greetingTitle}} Script
-            <i class="far fa-question-circle pointer" title="Help" v-b-tooltip.hover v-b-modal.help-modal></i>
+            <i
+                title="Help"
+                class="far fa-question-circle pointer"
+                v-b-tooltip.hover
+                v-b-modal.help-modal
+            />
         </h4>
         <b-modal id="help-modal" title="Help" ok-only>
-            <p>Type out the script that callers should hear when they reach this greeting.</p>
-            <p>If you are not sure where to start, use the <strong>Sample Greeting</strong> button
-            for a generic greeting you can modify to fit your needs.</p>
+            <p>
+                Type out the script that callers should hear when they reach
+                this greeting.
+            </p>
+            <p>
+                If you are not sure where to start, use the <strong>Sample
+                Greeting</strong> button for a generic greeting you can modify
+                to fit your needs.
+            </p>
         </b-modal>
         <ValidationObserver v-slot="{handleSubmit}">
-            <b-form @submit.prevent="handleSubmit(save)" @reset.prevent="reset" novalidate>
-                <text-editor v-model="form.greeting" placeholder="Enter Greeting" label="Greeting Script" rules="required"></text-editor>
+            <b-form
+                novalidate
+                @submit.prevent="handleSubmit(save)"
+                @reset.prevent="reset"
+            >
+                <text-editor
+                    v-model="form.greeting"
+                    placeholder="Enter Greeting"
+                    label="Greeting Script"
+                    rules="required"
+                />
                 <div class="text-center">
-                    <b-button class="w-25" variant="success" type="submit">{{saveText}}</b-button>
-                    <b-button class="w-25" variant="danger" type="reset" @click="reset" v-if="!hideReset">Reset</b-button>
+                    <b-button class="w-25" variant="success" type="submit">
+                        {{saveText}}
+                    </b-button>
+                    <b-button class="w-25" variant="danger" type="reset">
+                        Reset
+                    </b-button>
                 </div>
             </b-form>
         </ValidationObserver>
         <div class="text-center m-4">
-            <b-button class="w-50" variant="info" @click="enterSample">Create Sample Greeting</b-button>
+            <b-button
+                class="w-50"
+                variant="info"
+                @click="enterSample"
+            >
+                Create Sample Greeting
+            </b-button>
         </div>
     </div>
 </template>
@@ -28,27 +58,25 @@
     export default {
         props: {
             greetingTitle: {
-                type: String,
+                type    : String,
                 required: true,
             },
             greeting: {
-                type: String,
+                type    : String,
                 required: true,
             },
             saveText: {
-                type: String,
-                required: false,
+                type   : String,
                 default: 'Save',
             },
-            hideReset: {
-                type: Boolean,
-                required: false,
+            hideHeader: {
+                type   : Boolean,
                 default: false,
-            },
+            }
         },
         data() {
             return {
-                form       : {
+                form: {
                     greeting: this.greeting,
                 },
             }

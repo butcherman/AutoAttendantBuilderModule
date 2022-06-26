@@ -1,27 +1,16 @@
 <template>
-    <b-card
-        :border-variant="node.active ? 'info' : 'dark'"
-        :bg-variant="node.valid ? 'success' : 'warning'"
-        align="center"
-        class="pointer"
-        @click="emitClick"
-    >
-        <b-card-text>{{node.data.verbage}} {{node.data.num !== 11 ? node.data.num : ''}}</b-card-text>
-    </b-card>
+    <flow-template :node="node" hideSlot />
 </template>
 
 <script>
+    import FlowTemplate from '../flowTemplate.vue';
+
     export default {
+        components: { FlowTemplate },
         props: {
             node: {
-                type: Object,
+                type    : Object,
                 required: true,
-            }
-        },
-        methods: {
-            emitClick()
-            {
-                this.eventHub.$emit('flow-component-click', this.node);
             }
         },
     }

@@ -1,15 +1,39 @@
 <template>
     <div class="text-center">
-        <b-button pill variant="info" v-b-modal.form-modal>Modify Schedule</b-button>
-        <b-button pill variant="danger" @click="verifyDelete">Delete Schedule</b-button>
-        <b-modal ref="form-modal" id="form-modal" title="Schedule" hide-footer>
-            <schedule-form :headerText="node.data.headerText" :schedule="formSchedule" @save="saveData"></schedule-form>
+        <b-button
+            variant="info"
+            pill
+            v-b-modal.form-modal
+        >
+            Modify Schedule
+        </b-button>
+        <b-button
+            variant="danger"
+            pill
+            @click="verifyDelete"
+        >
+            Delete Schedule
+        </b-button>
+        <b-modal
+            id="form-modal"
+            ref="form-modal"
+            title="Schedule"
+            hide-footer
+        >
+            <schedule-form
+                :headerText="node.data.headerText"
+                :schedule="node.data.schedule"
+                @save="saveData"
+            />
         </b-modal>
     </div>
 </template>
 
 <script>
-    import scheduleForm from '../Forms/scheduleForm.vue';
+    import { mapStores }           from 'pinia';
+    import { useFlowStore }        from '../../Stores/flowStore';
+    import { DefaultGreetingData } from '../../Modules/defaultData';
+    import scheduleForm            from '../Forms/scheduleForm.vue';
 
     export default {
         components: { scheduleForm },
@@ -27,59 +51,32 @@
             }
         },
         computed: {
-            formSchedule()
-            {
-                let newSch = [];
-                this.node.data.schedule.forEach(elem => {
-                    let newObj = {
-                        start_time: elem.start_time,
-                        stop_time: elem.stop_time,
-                        days: [...elem.days],
-                    };
-
-                    newSch.push(newObj);
-                });
-
-                return newSch;
-            }
+            ...mapStores(useFlowStore),
         },
         methods: {
             saveData(data)
             {
-                this.node.valid           = true;
                 this.node.data.headerText = data.headerText;
                 this.node.data.schedule   = data.schedule;
+                this.node.valid           = true;
 
                 this.$refs['form-modal'].hide();
-
                 this.buildGreetings();
             },
             buildGreetings()
             {
-                let onHoursData = {
-                    headerText: 'On Hours Greeting',
-                    greeting: '',
-                    availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
-                }
+                let greetArr = ['On Hours Greeting', 'Off Hours Greeting'];
+                for(let greet of greetArr)
+                {
+                    let defaultData = new DefaultGreetingData;
+                    defaultData.headerText = greet;
 
-                let offHoursData = {
-                    headerText: 'Off Hours Greeting',
-                    greeting: '',
-                    availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
+                    this.flowStore.buildNode(this.node.id, 'greeting', defaultData);
                 }
-
-                this.$emit('giveBirth', {
-                    component: 'greeting',
-                    data     : onHoursData,
-                });
-                this.$emit('giveBirth', {
-                    component: 'greeting',
-                    data     : offHoursData,
-                });
             },
             verifyDelete()
             {
-                this.$emit('deleteMe');
+                this.$emit('delete_me');
             }
         },
     }

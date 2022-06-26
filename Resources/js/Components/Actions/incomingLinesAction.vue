@@ -1,21 +1,53 @@
 <template>
     <div class="text-center">
-        <b-button pill variant="info" v-b-modal.form-modal>Modify Line Data</b-button>
-        <b-button v-if="node.valid && !node.hasChildren" pill variant="info" @click="giveBirth('greeting')">Add Greeting</b-button>
-        <b-button v-if="node.valid && !node.hasChildren" pill variant="info" @click="giveBirth('schedule')">Add Schedule</b-button>
-        <b-modal ref="form-modal" id="form-modal" title="Incoming Lines" hide-footer>
-            <incoming-lines-form :lineList="[...node.data.lineList]" @save="saveData"></incoming-lines-form>
+        <b-button
+            variant="info"
+            pill
+            v-b-modal.form-modal
+        >
+            Modify Line Data
+        </b-button>
+        <b-button
+            v-if="node.valid && !node.hasChildren"
+            variant="info"
+            pill
+            @click="buildNext('greeting')"
+        >
+            Add Greeting
+        </b-button>
+        <b-button
+            v-if="node.valid && !node.hasChildren"
+            variant="info"
+            pill
+            @click="buildNext('schedule')"
+        >
+            Add Schedule
+        </b-button>
+        <b-modal
+            id="form-modal"
+            ref="form-modal"
+            title="Incoming Lines"
+            hide-footer
+        >
+            <incoming-lines-form
+                :lineList="node.data.lineList"
+                @save="saveData"
+            />
         </b-modal>
     </div>
 </template>
 
 <script>
-import incomingLinesForm from '../Forms/incomingLinesForm.vue';
+    import { DefaultGreetingData, DefaultScheduleData } from '../../Modules/defaultData';
+    import incomingLinesForm from '../Forms/incomingLinesForm.vue';
+    import { useFlowStore }  from '../../Stores/flowStore';
+    import { mapStores }     from 'pinia';
+
     export default {
         components: { incomingLinesForm },
         props: {
             node: {
-                type: Object,
+                type    : Object,
                 required: true,
             },
         },
@@ -26,43 +58,31 @@ import incomingLinesForm from '../Forms/incomingLinesForm.vue';
                 this.$refs['form-modal'].show();
             }
         },
+        computed: {
+            ...mapStores(useFlowStore),
+        },
         methods: {
             saveData(data)
             {
-                this.node.data.lineList = data.lineList;
-                this.node.valid = true;
+                this.node.data.headerText = 'Incoming Phone Numbers';
+                this.node.data.lineList   = data.lineList;
+                this.node.valid           = true;
                 this.$refs['form-modal'].hide();
             },
-            giveBirth(toWhat)
+            buildNext(type)
             {
                 let defaultData;
-
-                if(toWhat === 'greeting')
+                switch(type)
                 {
-                    defaultData = {
-                        headerText      : '24/7 Greeting',
-                        greeting        : '',
-                        availableOptions: [0,1,2,3,4,5,6,7,8,9,11],
-                    }
-                }
-                else if(toWhat === 'schedule')
-                {
-                    defaultData = {
-                        headerText: 'Business Hours',
-                        schedule  : [
-                            {
-                                start_time: '08:00',
-                                stop_time : '17:00',
-                                days      : ['mon', 'tue', 'wed', 'thu', 'fri'],
-                            }
-                        ]
-                    }
+                    case 'greeting':
+                        defaultData = new DefaultGreetingData;
+                        break;
+                    case 'schedule':
+                        defaultData = new DefaultScheduleData;
+                        break;
                 }
 
-                this.$emit('giveBirth', {
-                    component: toWhat,
-                    data     : defaultData,
-                });
+                this.flowStore.buildNode(this.node.id, type, defaultData);
             }
         },
     }
