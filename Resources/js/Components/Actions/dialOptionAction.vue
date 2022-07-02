@@ -27,16 +27,16 @@
                 :whatHappens="node.data.whatHappens"
                 :availableOptions="node.data.availableOptions"
                 @save="saveData"
-            ></dial-option-form>
+            />
         </b-modal>
     </div>
 </template>
 
 <script>
     import { DefaultGreetingData } from '../../Modules/defaultData';
-    import dialOptionForm from '../Forms/dialOptionForm.vue'
-    import { useFlowStore }  from '../../Stores/flowStore';
-    import { mapStores }     from 'pinia';
+    import dialOptionForm          from '../Forms/dialOptionForm.vue'
+    import { useFlowStore }        from '../../Stores/flowStore';
+    import { mapStores }           from 'pinia';
 
     export default {
         components: { dialOptionForm },
@@ -81,7 +81,6 @@
                 //  If the option changed from what it previously was, we need to update the available list
                 if(data.num !== this.node.data.num)
                 {
-                    console.log('num changed');
                     let index = this.node.data.availableOptions.indexOf(data.num);
                     this.node.data.availableOptions.splice(index, 1);
                     if(this.node.data.num !== '?')
@@ -121,8 +120,8 @@
                         }
                         break;
                     case 'Play Greeting':
-                        componentType = 'greeting';
-                        defaultData   = new DefaultGreetingData;
+                        componentType          = 'greeting';
+                        defaultData            = new DefaultGreetingData;
                         defaultData.headerText = 'Sub Menu';
                 }
 

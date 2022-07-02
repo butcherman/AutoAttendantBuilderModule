@@ -12,7 +12,7 @@
         <div class="row justify-content-center mt-4 pt-4 border-top">
             <div class="col-md-6">
                 <incoming-lines-form
-                    :lineList="activeStep.node.data.lineList"
+                    :lineList="activeStep.data.lineList"
                     hideReset
                     saveText="Next"
                     @save="save"
@@ -23,7 +23,9 @@
 </template>
 
 <script>
-    import incomingLinesForm   from '../Forms/incomingLinesForm.vue';
+    import incomingLinesForm from '../Forms/incomingLinesForm.vue';
+    import { useFlowStore } from '../../Stores/flowStore';
+    import { mapStores } from 'pinia';
 
     export default {
         components: { incomingLinesForm },
@@ -35,23 +37,32 @@
         },
         data() {
             return {
-                lineList: [],
+                // lineList: [],
             }
+        },
+        computed: {
+            ...mapStores(useFlowStore),
         },
         methods: {
             save(data)
             {
-                this.activeStep.node.data = data;
-                this.activeStep.node.data.headerText = 'Incoming Phone Lines';
+                this.activeStep.data.lineList   = data.lineList;
+                this.activeStep.data.headerText = 'Incoming Phone Lines';
+
+                let newNode = this.flowStore.buildNode(this.activeStep.parentId, 'incoming-lines', this.activeStep.data);
 
                 let nextStep = [
                     {
                         component: 'ask-for-schedule',
                         data: {},
+                        parentId: newNode.id,
                     }
                 ];
 
-                this.$emit('nextStep', nextStep);
+                this.activeStep.nextStep = nextStep;
+                this.activeStep.nodeId   = newNode.id;
+
+                this.$emit('nextStep');
             },
         },
     }

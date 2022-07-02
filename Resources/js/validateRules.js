@@ -66,30 +66,22 @@ extend('unique-phone-number', {
  * Compare list of used one key options to make sure they are unique
  */
 extend('unique-one-key', {
-    params: ['optList'],
-    validate(dialOption, { optList }) {
-
-        console.log(optList);
-
-        let hasArr = [];
-        for(let opt in optList)
-        {
-            console.log('opt num - '+opt.optNum);
-            if(opt.optNum == dialOption)
+    params: ['usedOptions'],
+    validate(dialOption, { usedOptions }) {
+        let containsArr = [];
+        let passed      = true;
+        usedOptions.forEach(item => {
+            if(!containsArr.includes(+item))
             {
-                hasArr.push(opt.optNum);
+                containsArr.push(+item);
             }
-        }
+            else
+            {
+                passed = false;
+            }
+        });
 
-        console.log('has array');
-        console.log(hasArr);
-
-        if(hasArr.length > 1)
-        {
-            return false;
-        }
-
-        return true;
+        return passed;
     },
     message: 'This option can only be used once',
 });

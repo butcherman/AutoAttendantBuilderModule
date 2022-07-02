@@ -139,8 +139,6 @@
 </template>
 
 <script>
-    require('../../validateRules');
-
     export default {
         props: {
             headerText: {

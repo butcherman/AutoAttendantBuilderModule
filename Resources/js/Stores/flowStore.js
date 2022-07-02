@@ -3,18 +3,28 @@ import { defineStore } from 'pinia';
 export const useFlowStore = defineStore('flow', {
     state: () => {
         return {
-            idIndex: 0,
-            nodes  : [],
+            idIndex   : 0,
+            stepIndex : 0,
+            nodes     : [],
+            steps     : [],
         }
     },
     getters: {
-        //
+        activeStep()
+        {
+            if(this.steps.length)
+            {
+                return this.steps[this.stepIndex];
+            }
+
+            return {};
+        }
     },
     actions: {
         buildNode(parentId, nodeComponent, data)
         {
             let newNode = {
-                id: this.idIndex++,
+                id         : this.idIndex++,
                 parentId,
                 nodeComponent,
                 data,
@@ -27,6 +37,22 @@ export const useFlowStore = defineStore('flow', {
             this.notifyParent(parentId);
 
             return newNode;
+        },
+        validateAllnodes()
+        {
+            this.nodes.forEach(node => node.valid = true);
+        },
+        buildWizardStep(component, data, parentId)
+        {
+            let newStep = {
+                nodeId  : null,
+                nextStep: [],
+                parentId,
+                component,
+                data,
+            }
+
+            this.steps.push(newStep);
         },
         notifyParent(parentId)
         {

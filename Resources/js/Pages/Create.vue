@@ -50,17 +50,17 @@
 </template>
 
 <script>
-    import guest from '../../../../../resources/js/Layouts/guest';
-    import Layout from '../Template/Layout.vue';
+    import guest                       from '../../../../../resources/js/Layouts/guest';
+    import Layout                      from '../Template/Layout.vue';
 
     import { useFlowStore }            from '../Stores/flowStore';
     import { mapStores }               from 'pinia';
     import { DefaultIncomingLineData } from '../Modules/defaultData';
 
-    import Vue         from 'vue';
-    import FlowyPlugin from "@hipsjs/flowy-vue";
-    import upperFirst  from 'lodash/upperFirst';
-    import camelCase   from 'lodash/camelCase';
+    import Vue                         from 'vue';
+    import FlowyPlugin                 from "@hipsjs/flowy-vue";
+    import upperFirst                  from 'lodash/upperFirst';
+    import camelCase                   from 'lodash/camelCase';
 
     import "@hipsjs/flowy-vue/dist/lib/flowy-vue.css";
 
@@ -101,9 +101,6 @@
                 activeNode: {},
             }
         },
-        created() {
-            //
-        },
         mounted() {
             this.initialize();
             /**
@@ -115,9 +112,6 @@
         },
         computed: {
             ...mapStores(useFlowStore),
-        },
-        watch: {
-            //
         },
         methods: {
             initialize()

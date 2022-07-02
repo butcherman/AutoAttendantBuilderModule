@@ -1,30 +1,31 @@
 <template>
-    <div>
-        <div class="row h-100">
+    <div class="row h-100">
             <div class="col-12 h-100 overflow-scroll">
                 <Transition name="swipe" mode="out-in">
                     <component
-                        :is="wizComponent"
-                        :activeStep="activeStep"
+                        :is="flowStore.activeStep.component"
+                        :activeStep="flowStore.activeStep"
                         @nextStep="nextStep"
                         @endOfLine="endOfLine"
                     ></component>
                 </Transition>
             </div>
         </div>
-    </div>
 </template>
 
 <script>
-    import guest from '../../../../../resources/js/Layouts/guest';
-    import Layout from '../Template/Layout.vue';
+    require('../validateRules');
 
-    import Vue         from 'vue';
-    import upperFirst  from 'lodash/upperFirst';
-    import camelCase   from 'lodash/camelCase';
+    import guest                       from '../../../../../resources/js/Layouts/guest';
+    import Layout                      from '../Template/Layout.vue';
 
-    //  Module Functions
-    import { NewNode, DefaultIncomingLineData } from '../Modules/defaultData';
+    import { useFlowStore }            from '../Stores/flowStore';
+    import { mapStores }               from 'pinia';
+    import { DefaultIncomingLineData } from '../Modules/defaultData';
+
+    import Vue                        from 'vue';
+    import upperFirst                 from 'lodash/upperFirst';
+    import camelCase                  from 'lodash/camelCase';
 
     /**
      * Register all wizard components
@@ -39,85 +40,67 @@
 
     export default {
         layout: [ guest, Layout ],
-        props: {
-            //
-        },
         data() {
             return {
-                stepId: 0,
-                nodeId: 0,
-                wizComponent: 'incomingLinesWizard',
-                activeStep: {},
-                progress: [],
+                wizComponent: 'incoming-lines-wizard',
             }
         },
-        created() {
-            this.buildStep('incoming-lines-wizard', new NewNode(-1, 'incoming-lines', new DefaultIncomingLineData));
-        },
         mounted() {
+            this.initialize();
         },
         computed: {
-            //
-        },
-        watch: {
-            //
+            ...mapStores(useFlowStore),
         },
         methods: {
-            /**
-             * Build the Step Prop for the next step
-             */
-            buildStep(component, node, data)
+            initialize()
             {
-                //  If there is a node included in the step, we must assign it an ID
-                if(node)
+                let defaultData = new DefaultIncomingLineData;
+                this.flowStore.buildWizardStep('incoming-lines-wizard', defaultData, -1);
+            },
+            nextStep()
+            {
+                if(this.flowStore.activeStep.nextStep.length)
                 {
-                    node.id = this.nodeId++;
+                    let next = this.flowStore.activeStep.nextStep.shift();
+                    this.flowStore.buildWizardStep(next.component, next.data, next.parentId);
+                    this.flowStore.stepIndex++;
                 }
+                else
+                {
+                    for(let i = this.flowStore.steps.length -1; i >= 0; i--)
+                    {
+                        if(this.flowStore.steps[i].nextStep.length)
+                        {
+                            let next = this.flowStore.steps[i].nextStep.shift();
 
-                let newStep = {
-                    id: this.stepId++,
-                    component,
-                    node,
-                    data,
+                            this.flowStore.buildWizardStep(next.component, next.data, next.parentId);
+                            this.flowStore.stepIndex++;
+                            break;
+                        }
+                        else if(i === 0)
+                        {
+                            this.endOfLine();
+                        }
+                    }
                 }
-
-                this.progress.push(newStep);
-                this.activeStep   = newStep;
-                this.wizComponent = component;
             },
-            /**
-             * Get the next step information from the current finished step and use that
-             * to build the next step
-             */
-            nextStep(data)
-            {
-                this.activeStep.nextStep = data;
-
-                //  Steps may fork into multiple steps.  Use array to manage them
-                let next = data.shift();
-                this.buildStep(next.component, next.node, next.data);
-            },
-            /**
-             * The end of the Wizard for this line of steps has been reached
-             * Check other steps to see if there are any remaining next steps
-             */
             endOfLine()
             {
-                for(let i = this.progress.length - 1; i >= 0; i--)
-                {
-                    if(this.progress[i].nextStep && this.progress[i].nextStep.length)
-                    {
-                        let next = this.progress[i].nextStep.shift();
-                        this.buildStep(next.component, next.node, next.data);
-                        break;
-                    }
+                this.flowStore.buildWizardStep('wrap-it-up', {}, 99);
+                this.flowStore.validateAllnodes();
+                this.flowStore.stepIndex++;
 
-                    //  No steps left, build the AA Tree Nodes
-                    if(i === 0)
-                    {
-                        this.buildStep('buildNodes', {}, this.progress);
-                    }
-                }
+                let formData = this.$inertia.form({
+                    node_data: this.flowStore.nodes,
+                });
+
+                formData.post(route('AutoAttendantBuilderModule.store'), {
+                    onError  : (err) => alert(err),
+                    onSuccess: () => {
+                        this.flowStore.steps = [];
+                        this.flowStore.stepIndex = 0;
+                    },
+                });
             }
         },
     }
